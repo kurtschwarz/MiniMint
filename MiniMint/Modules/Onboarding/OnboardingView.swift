@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct OnboardingView: View {
+  @EnvironmentObject private var coordinator: RootCoordinator
+
   var body: some View {
     ZStack {
       Color("background_primary")
@@ -11,7 +13,9 @@ struct OnboardingView: View {
           .frame(maxHeight: .infinity)
 
         Button(
-          action: {},
+          action: {
+            self.coordinator.completeOnboarding()
+          },
           label: {
             Text("Get Started")
               .frame(maxWidth: .infinity)
@@ -32,4 +36,5 @@ struct OnboardingView: View {
 
 #Preview {
   OnboardingView()
+    .environmentObject(RootCoordinator())
 }
