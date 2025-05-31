@@ -14,7 +14,7 @@ struct OnboardingView: View {
 
         Button(
           action: {
-            self.coordinator.completeOnboarding()
+            self.coordinator.presentSheet(.setup)
           },
           label: {
             Text("Get Started")

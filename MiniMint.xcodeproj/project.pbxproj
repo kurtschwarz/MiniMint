@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		57DAF5392DE5D2E70033405C /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 57DAF5382DE5D2E40033405C /* .gitignore */; };
+		57DAF55C2DE75BB70033405C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 57DAF55B2DE75BB70033405C /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +33,7 @@
 		57DAF5072DE540B30033405C /* MiniMintTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MiniMintTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		57DAF5112DE540B30033405C /* MiniMintUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MiniMintUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		57DAF5382DE5D2E40033405C /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		57DAF55B2DE75BB70033405C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -93,6 +95,7 @@
 		57DAF4ED2DE540B20033405C = {
 			isa = PBXGroup;
 			children = (
+				57DAF55B2DE75BB70033405C /* PrivacyInfo.xcprivacy */,
 				57DAF4F82DE540B20033405C /* MiniMint */,
 				57DAF50A2DE540B30033405C /* MiniMintTests */,
 				57DAF5142DE540B30033405C /* MiniMintUITests */,
@@ -231,6 +234,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57DAF55C2DE75BB70033405C /* PrivacyInfo.xcprivacy in Resources */,
 				57DAF5392DE5D2E70033405C /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
