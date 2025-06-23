@@ -1,29 +1,34 @@
 import SwiftUI
 
+// MARK: - SetupStep
+
 enum SetupStep: Hashable {
   case setupFamily
   case setupCurrency
   case setupChildren
 }
 
+// MARK: - SetupChildName
+
 struct SetupChildName: Identifiable {
-  let id = UUID()
-  var value: String
+
+  // MARK: Lifecycle
 
   init(_ value: String) {
     self.value = value
   }
+
+  // MARK: Internal
+
+  let id = UUID()
+  var value: String
 }
 
+// MARK: - SetupState
+
 final class SetupState: ObservableObject {
-  @Published var step: SetupStep = .setupFamily
 
-  @Published var familyName: String = ""
-  @Published var currencyName: String = ""
-  @Published var children: [SetupChildName] = [.init("")]
-
-  @Published var randomFamilyNames: [String] = []
-  @Published var randomCurrencyNames: [String] = []
+  // MARK: Lifecycle
 
   init() {
     if let asset = NSDataAsset(name: "random_family_names") {
@@ -36,6 +41,29 @@ final class SetupState: ObservableObject {
 
     familyName = randomFamilyNames.randomElement() ?? ""
     currencyName = randomCurrencyNames.randomElement() ?? ""
+  }
+
+  // MARK: Internal
+
+  @Published var step = SetupStep.setupFamily
+
+  @Published var familyName = ""
+  @Published var currencyName = ""
+  @Published var children: [SetupChildName] = [.init("")]
+
+  @Published var randomFamilyNames: [String] = []
+  @Published var randomCurrencyNames: [String] = []
+
+  @ViewBuilder
+  func view(step: SetupStep) -> some View {
+    switch step {
+    case .setupFamily:
+      SetupFamilyView()
+    case .setupCurrency:
+      SetupCurrencyView()
+    case .setupChildren:
+      SetupChildrenView()
+    }
   }
 
   func next() {
@@ -67,27 +95,19 @@ final class SetupState: ObservableObject {
   func randomizeCurrencyName() {
     currencyName = randomCurrencyNames.randomElement() ?? ""
   }
-
-  @ViewBuilder
-  func view(step: SetupStep) -> some View {
-    switch step {
-    case .setupFamily:
-      SetupFamilyView()
-    case .setupCurrency:
-      SetupCurrencyView()
-    case .setupChildren:
-      SetupChildrenView()
-    }
-  }
 }
 
+// MARK: - SetupView
+
 struct SetupView: View {
-  @EnvironmentObject private var appState: AppState
-  @StateObject private var setupState = SetupState()
+
+  // MARK: Lifecycle
 
   init() {
     UIView.setAnimationsEnabled(false)
   }
+
+  // MARK: Internal
 
   var body: some View {
     ZStack {
@@ -157,9 +177,16 @@ struct SetupView: View {
     }
     .navigationBarBackButtonHidden(true)
   }
+
+  // MARK: Private
+
+  @EnvironmentObject private var appState: AppState
+  @StateObject private var setupState = SetupState()
 }
 
 #Preview {
-  SetupView()
-    .environmentObject(AppState())
+  NavigationStack {
+    SetupView()
+      .environmentObject(AppState())
+  }
 }

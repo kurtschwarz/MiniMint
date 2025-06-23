@@ -1,21 +1,17 @@
 import SwiftUI
 
+// MARK: - CarouselItem
+
 struct CarouselItem: Identifiable {
   var id = UUID()
   var text: Text
 }
 
+// MARK: - OnboardingCarousel
+
 struct OnboardingCarousel: View {
-  private let timer = Timer.publish(every: 3.0, on: .main, in: .default).autoconnect()
 
-  private var items: [CarouselItem] = [
-    CarouselItem(text: Text("Onboarding 1")),
-    CarouselItem(text: Text("Onboarding 2")),
-    CarouselItem(text: Text("Onboarding 3")),
-  ]
-
-  @State private var tabs: [CarouselItem]
-  @State private var selectedTab: Int = 1
+  // MARK: Lifecycle
 
   public init() {
     var tabs = items.map(\.self)
@@ -27,6 +23,8 @@ struct OnboardingCarousel: View {
 
     self.tabs = tabs
   }
+
+  // MARK: Internal
 
   var body: some View {
     VStack {
@@ -73,6 +71,19 @@ struct OnboardingCarousel: View {
 //      }
 //    }
   }
+
+  // MARK: Private
+
+  @State private var tabs: [CarouselItem]
+  @State private var selectedTab = 1
+
+  private let timer = Timer.publish(every: 3.0, on: .main, in: .default).autoconnect()
+
+  private var items: [CarouselItem] = [
+    CarouselItem(text: Text("Onboarding 1")),
+    CarouselItem(text: Text("Onboarding 2")),
+    CarouselItem(text: Text("Onboarding 3")),
+  ]
 }
 
 #Preview {

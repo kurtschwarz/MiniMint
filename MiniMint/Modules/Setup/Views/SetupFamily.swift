@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct SetupFamilyView: View {
-  @EnvironmentObject private var setupState: SetupState
+
+  // MARK: Internal
 
   var body: some View {
     VStack {
@@ -38,6 +39,10 @@ struct SetupFamilyView: View {
       .accentColor(Color.gray)
     }
   }
+
+  // MARK: Private
+
+  @EnvironmentObject private var setupState: SetupState
 }
 
 #Preview {

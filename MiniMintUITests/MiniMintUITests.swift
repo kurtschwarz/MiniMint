@@ -5,7 +5,7 @@ final class MiniMintUITests: XCTestCase {
     continueAfterFailure = false
   }
 
-  override func tearDownWithError() throws {}
+  override func tearDownWithError() throws { }
 
   @MainActor
   func testExample() throws {

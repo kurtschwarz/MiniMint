@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct SetupCurrencyView: View {
-  @EnvironmentObject private var setupState: SetupState
+
+  // MARK: Internal
 
   var body: some View {
     VStack {
@@ -40,6 +41,10 @@ struct SetupCurrencyView: View {
       .accentColor(Color.gray)
     }
   }
+
+  // MARK: Private
+
+  @EnvironmentObject private var setupState: SetupState
 }
 
 #Preview {

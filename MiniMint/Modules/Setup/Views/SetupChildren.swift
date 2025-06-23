@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct SetupChildrenView: View {
-  @EnvironmentObject private var setupState: SetupState
+
+  // MARK: Internal
 
   var body: some View {
     VStack {
@@ -63,6 +64,10 @@ struct SetupChildrenView: View {
       .disabled(setupState.children.count > 4)
     }
   }
+
+  // MARK: Private
+
+  @EnvironmentObject private var setupState: SetupState
 }
 
 #Preview {

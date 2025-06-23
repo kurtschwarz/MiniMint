@@ -1,10 +1,14 @@
 import SwiftUI
 
+// MARK: - AppRoute
+
 enum AppRoute: Hashable {
   case onboarding
   case setup
   case dashboard
 }
+
+// MARK: - AppState
 
 final class AppState: ObservableObject {
   @Published var path = NavigationPath()
@@ -18,6 +22,8 @@ final class AppState: ObservableObject {
   }
 }
 
+// MARK: - AppDelegate
+
 final class AppDelegate: NSObject, UIApplicationDelegate {
   static var orientationLock = UIInterfaceOrientationMask.all
 
@@ -26,10 +32,12 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
   }
 }
 
+// MARK: - MiniMintApp
+
 @main
 struct MiniMintApp: App {
-  @StateObject private var appState = AppState()
-  @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
+  // MARK: Lifecycle
 
   init() {
 //    UserDefaults.standard.register(defaults: [
@@ -37,17 +45,9 @@ struct MiniMintApp: App {
 //    ])
   }
 
-  @ViewBuilder
-  func view(route: AppRoute) -> some View {
-    switch route {
-    case .onboarding:
-      OnboardingView()
-    case .setup:
-      SetupView()
-    case .dashboard:
-      DashboardView()
-    }
-  }
+  // MARK: Internal
+
+  @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
   var body: some Scene {
     WindowGroup {
@@ -63,4 +63,20 @@ struct MiniMintApp: App {
       .environmentObject(appState)
     }
   }
+
+  @ViewBuilder
+  func view(route: AppRoute) -> some View {
+    switch route {
+    case .onboarding:
+      OnboardingView()
+    case .setup:
+      SetupView()
+    case .dashboard:
+      DashboardView()
+    }
+  }
+
+  // MARK: Private
+
+  @StateObject private var appState = AppState()
 }

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct DashboardView: View {
+  // MARK: Internal
+
   var body: some View {
     VStack {
       Text("Dashboard!")
@@ -18,7 +20,7 @@ struct DashboardView: View {
 
       ToolbarItem(placement: .topBarTrailing) {
         Button(
-          action: {},
+          action: { },
           label: {
             Image(systemName: "person")
               .foregroundStyle(Color("primary_green"))
@@ -31,10 +33,15 @@ struct DashboardView: View {
     .navigationBarTitle("")
     .navigationBarBackButtonHidden(true)
   }
+
+  // MARK: Private
+
+  @EnvironmentObject private var appState: AppState
 }
 
 #Preview {
   NavigationStack {
     DashboardView()
+      .environmentObject(AppState())
   }
 }

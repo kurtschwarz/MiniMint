@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct OnboardingView: View {
-  @EnvironmentObject private var appState: AppState
+
+  // MARK: Internal
 
   var body: some View {
     ZStack {
@@ -33,6 +34,10 @@ struct OnboardingView: View {
       .accentColor(Color("primary_green"))
     }
   }
+
+  // MARK: Private
+
+  @EnvironmentObject private var appState: AppState
 }
 
 #Preview {
