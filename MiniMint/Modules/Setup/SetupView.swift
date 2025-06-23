@@ -1,82 +1,165 @@
 import SwiftUI
 
-enum Steps: Hashable {
+enum SetupStep: Hashable {
   case setupFamily
   case setupCurrency
   case setupChildren
 }
 
-class SetupCoordinator: ObservableObject {
-  @EnvironmentObject private var rootCoordinator: RootCoordinator
+struct SetupChildName: Identifiable {
+  let id = UUID()
+  var value: String
 
-  @Published var history: [Steps] = []
+  init(_ value: String) {
+    self.value = value
+  }
+}
 
-  @State var familyName: String = ""
-  @State var currencyName: String = ""
-  @State var childrenNames: [String] = []
+final class SetupState: ObservableObject {
+  @Published var step: SetupStep = .setupFamily
 
-  private var steps: [Steps] = [
-    .setupFamily,
-    .setupChildren,
-    .setupCurrency,
-  ]
+  @Published var familyName: String = ""
+  @Published var currencyName: String = ""
+  @Published var children: [SetupChildName] = [.init("")]
+  
+  @Published var randomFamilyNames: [String] = []
+  @Published var randomCurrencyNames: [String] = []
 
-  func next () {
-    var next: Steps?
-    let current = self.history.last ?? .setupFamily
-    switch current {
-    case .setupFamily:
-      next = .setupCurrency
-    case .setupCurrency:
-      next = .setupChildren
-    case .setupChildren:
-      next = nil
+  init() {
+    if let asset = NSDataAsset(name: "random_family_names") {
+      self.randomFamilyNames = try! JSONSerialization.jsonObject(with: asset.data, options: []) as! [String]
     }
 
-    if (next != nil) {
-      self.history.append(next!)
+    if let asset = NSDataAsset(name: "random_currency_names") {
+      self.randomCurrencyNames = try! JSONSerialization.jsonObject(with: asset.data, options: []) as! [String]
+    }
+
+    self.familyName = self.randomFamilyNames.randomElement() ?? ""
+    self.currencyName = self.randomCurrencyNames.randomElement() ?? ""
+  }
+  
+  func next() {
+    switch self.step {
+    case .setupFamily:
+      self.step = .setupCurrency
+    case .setupCurrency:
+      self.step = .setupChildren
+    case .setupChildren:
+      self.step = .setupFamily
     }
   }
 
-  func complete () {
-    if (self.rootCoordinator.state == .onboarding) {
-      self.rootCoordinator.completeOnboarding()
+  func previous() {
+    switch self.step {
+    case .setupFamily:
+      return
+    case .setupCurrency:
+      self.step = .setupFamily
+    case .setupChildren:
+      self.step = .setupCurrency
+    }
+  }
+
+  func randomizeFamilyName () {
+    self.familyName = self.randomFamilyNames.randomElement() ?? ""
+  }
+
+  func randomizeCurrencyName () {
+    self.currencyName = self.randomCurrencyNames.randomElement() ?? ""
+  }
+
+  @ViewBuilder
+  func view (step: SetupStep) -> some View {
+    switch step {
+    case .setupFamily:
+      SetupFamilyView()
+    case .setupCurrency:
+      SetupCurrencyView()
+    case .setupChildren:
+      SetupChildrenView()
     }
   }
 }
 
 struct SetupView: View {
-  var afterCompletion: (() -> Void)?
+  @EnvironmentObject private var appState: AppState
+  @StateObject private var setupState = SetupState()
 
-  @StateObject private var coordinator = SetupCoordinator()
-  @EnvironmentObject private var rootCoordinator: RootCoordinator
+  init() {
+    UIView.setAnimationsEnabled(false)
+  }
 
   var body: some View {
-    NavigationStack (path: $coordinator.history) {
-      SetupFamilyView()
-        .navigationDestination(for: Steps.self) { step in
-          switch step {
-          case .setupFamily:
-            SetupFamilyView()
-          case .setupCurrency:
-            SetupCurrencyView()
-          case .setupChildren:
-            SetupChildrenView()
+    ZStack {
+      Image("background_tile")
+          .resizable(resizingMode: .tile)
+          .ignoresSafeArea(.all)
+
+      VStack {
+        Spacer()
+
+        VStack (alignment: .center) {
+          self.setupState.view(step: self.setupState.step)
+            .environmentObject(self.setupState)
+
+          Button(
+            action: {
+              if (self.setupState.step == .setupChildren) {
+                self.appState.push(route: .dashboard)
+              } else {
+                self.setupState.next()
+              }
+            },
+            label: {
+              Text(self.setupState.step == .setupChildren ? "Complete" : "Next")
+                .frame(maxWidth: .infinity)
+            }
+          )
+          .tint(Color("primary_green"))
+          .buttonStyle(.borderedProminent)
+          .controlSize(.large)
+        }
+        .padding(.vertical, 20)
+        .padding(.horizontal, 20)
+        .background(
+          UnevenRoundedRectangle(
+            cornerRadii: .init(topLeading: 40, topTrailing: 40)
+          )
+          .fill(Color.white)
+          .edgesIgnoringSafeArea(.bottom)
+          .shadow(radius: 60)
+        )
+      }
+    }
+    .toolbar {
+        ToolbarItem(placement: .topBarLeading) {
+          Button(
+            action:{
+              if (self.setupState.step == .setupFamily) {
+                self.appState.pop()
+              } else {
+                self.setupState.previous()
+              }
+            }
+          ) {
+            HStack {
+              Image(systemName: "chevron.left")
+                .scaleEffect(0.60)
+                .font(Font.title.weight(.semibold))
+
+              Text("Back")
+                .offset(x: -12)
+            }
           }
+          .offset(x: -7)
+          .accentColor(Color("primary_green"))
         }
     }
-    .accentColor(Color("primary_green"))
-    .environmentObject(self.coordinator)
-    .environmentObject(self.rootCoordinator)
-    .interactiveDismissDisabled(true)
-    .presentationDragIndicator(.hidden)
-    .presentationDetents([
-      .fraction(0.6),
-    ])
+    .navigationBarBackButtonHidden(true)
   }
 }
 
 #Preview {
   SetupView()
-    .environmentObject(RootCoordinator())
+    .environmentObject(AppState())
 }

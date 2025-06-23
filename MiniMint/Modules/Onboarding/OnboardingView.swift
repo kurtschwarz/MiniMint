@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct OnboardingView: View {
-  @EnvironmentObject private var coordinator: RootCoordinator
+  @EnvironmentObject private var appState: AppState
 
   var body: some View {
     ZStack {
@@ -14,7 +14,7 @@ struct OnboardingView: View {
 
         Button(
           action: {
-            self.coordinator.presentSheet(.setup)
+            self.appState.push(route: .setup)
           },
           label: {
             Text("Get Started")
@@ -30,11 +30,12 @@ struct OnboardingView: View {
       .navigationBarTitle("")
       .navigationBarBackButtonHidden(true)
       .navigationBarHidden(true)
+      .accentColor(Color("primary_green"))
     }
   }
 }
 
 #Preview {
   OnboardingView()
-    .environmentObject(RootCoordinator())
+    .environmentObject(AppState())
 }

@@ -1,33 +1,46 @@
 import SwiftUI
 
 struct SetupFamilyView: View {
-  @EnvironmentObject private var coordinator: SetupCoordinator
+  @EnvironmentObject private var setupState: SetupState
 
   var body: some View {
     VStack {
-      Spacer()
+      Image("setup_family_banner")
+        .padding(.top, -60)
 
-      Text("Setup Family")
+      Text("What should we call your family?")
+        .font(.system(size: 20, weight: .bold))
+        .foregroundStyle(Color("primary_green"))
+        .padding(.top, 30)
+        .padding(.bottom, 2)
 
-      Spacer()
+      Text("You can change this later.")
+        .font(.system(size: 16, weight: .regular))
+        .foregroundStyle(Color("primary_green"))
+        .padding(.bottom, 30)
 
-      Button(action: {
-        self.coordinator.next()
-      }, label: {
-        Text("Next")
-          .frame(maxWidth: .infinity)
-      })
-      .tint(Color("primary_green"))
-      .buttonStyle(.borderedProminent)
+      TextField("", text: $setupState.familyName, prompt: Text("Family Name"))
+        .padding()
+        .foregroundStyle(Color.black)
+        .background(Color.gray.opacity(0.1))
+        .disableAutocorrection(true)
+
+      Button(
+        action: {
+          self.setupState.randomizeFamilyName()
+        },
+        label: {
+          Label("Generate with AI", systemImage: "apple.intelligence").frame(maxWidth: .infinity)
+        }
+      )
       .controlSize(.large)
+      .buttonStyle(.borderedProminent)
+      .accentColor(Color.gray)
     }
-    .padding(.vertical, 20)
-    .padding(.horizontal, 20)
-    .navigationBarBackButtonHidden(true)
   }
 }
 
 #Preview {
   SetupFamilyView()
-    .environmentObject(SetupCoordinator())
+    .environmentObject(SetupState())
 }

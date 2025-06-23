@@ -1,33 +1,48 @@
 import SwiftUI
 
 struct SetupCurrencyView: View {
-  @EnvironmentObject private var coordinator: SetupCoordinator
+  @EnvironmentObject private var setupState: SetupState
 
   var body: some View {
     VStack {
-      Spacer()
+      Image("setup_currency_image")
+        .padding(.top, -60)
 
-      Text("Setup Currency")
+      Text("Mint a new currency.")
+        .font(.system(size: 20, weight: .bold))
+        .foregroundStyle(Color("primary_green"))
+        .padding(.top, 30)
+        .padding(.bottom, 2)
 
-      Spacer()
+      Text("It’s easier for kids to remember and get excited about managing their “coins” or “buckaroos”. Use a name that is playful and relatable for your family.")
+        .font(.system(size: 16, weight: .regular))
+        .foregroundStyle(Color("primary_green"))
+        .padding(.bottom, 30)
+        .lineSpacing(6)
 
-      Button(action: {
-        self.coordinator.next()
-      }, label: {
-        Text("Next")
-          .frame(maxWidth: .infinity)
-      })
-      .tint(Color("primary_green"))
-      .buttonStyle(.borderedProminent)
+      TextField("", text: $setupState.currencyName, prompt: Text("Currency Name"))
+        .padding()
+        .foregroundStyle(Color.black)
+        .background(Color.gray.opacity(0.1))
+        .disableAutocorrection(true)
+        .keyboardType(.asciiCapable)
+
+      Button(
+        action: {
+          self.setupState.randomizeCurrencyName()
+        },
+        label: {
+          Label("Generate with AI", systemImage: "apple.intelligence").frame(maxWidth: .infinity)
+        }
+      )
       .controlSize(.large)
+      .buttonStyle(.borderedProminent)
+      .accentColor(Color.gray)
     }
-    .padding(.vertical, 20)
-    .padding(.horizontal, 20)
-    .navigationBarBackButtonHidden(false)
   }
 }
 
 #Preview {
   SetupCurrencyView()
-    .environmentObject(SetupCoordinator())
+    .environmentObject(SetupState())
 }

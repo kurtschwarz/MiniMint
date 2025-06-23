@@ -1,38 +1,71 @@
 import SwiftUI
 
 struct SetupChildrenView: View {
-  @EnvironmentObject private var coordinator: SetupCoordinator
-  @EnvironmentObject private var rootCoordinator: RootCoordinator
+  @EnvironmentObject private var setupState: SetupState
 
   var body: some View {
     VStack {
-      Spacer()
+      Text("Add your children")
+        .font(.system(size: 20, weight: .bold))
+        .foregroundStyle(Color("primary_green"))
+        .padding(.top, 30)
+        .padding(.bottom, 2)
+      
+      Text("You can add/remove children later.")
+        .font(.system(size: 16, weight: .regular))
+        .foregroundStyle(Color("primary_green"))
+        .padding(.bottom, 30)
 
-      Text("Setup Children")
+      LazyVGrid (
+        columns: [
+          GridItem(.flexible(), spacing: 10),
+          GridItem(.fixed(28)),
+        ],
+        alignment: .trailing,
+        content: {
+          ForEach(self.$setupState.children, id: \.id, content: { $child in
+            TextField(
+              "",
+              text: $child.value,
+              prompt: Text("Child's name")
+            )
+            .padding()
+            .foregroundStyle(Color.black)
+            .background(Color.gray.opacity(0.1))
+            .disableAutocorrection(true)
 
-      Spacer()
+            Button(
+              action: {
+                guard let index = self.setupState.children.firstIndex(
+                  where: { $0.id == child.id },
+                ) else {
+                  return
+                }
+                
+                self.setupState.children.remove(at: index)
+              },
+              label: { Label("", systemImage: "minus.circle.fill") },
+            )
+            .disabled(self.setupState.children.count <= 1)
+            .accentColor(Color.red)
+          })
+        },
+      )
 
       Button(action: {
-        self.rootCoordinator.completeOnboarding()
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-          self.rootCoordinator.dismissSheet()
-        }
+        self.setupState.children.append(.init(""))
       }, label: {
-        Text("Complete")
-          .frame(maxWidth: .infinity)
+        Text("Add another").frame(maxWidth: .infinity)
       })
-      .tint(Color("primary_green"))
-      .buttonStyle(.borderedProminent)
       .controlSize(.large)
+      .buttonStyle(.borderedProminent)
+      .accentColor(Color.gray)
+      .disabled(self.setupState.children.count > 4)
     }
-    .padding(.vertical, 20)
-    .padding(.horizontal, 20)
-    .navigationBarBackButtonHidden(false)
   }
 }
 
 #Preview {
   SetupChildrenView()
-    .environmentObject(SetupCoordinator())
+    .environmentObject(SetupState())
 }
