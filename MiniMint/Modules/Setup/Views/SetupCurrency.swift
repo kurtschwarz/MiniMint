@@ -29,11 +29,11 @@ struct SetupCurrencyView: View {
 
       Button(
         action: {
-          self.setupState.randomizeCurrencyName()
+          setupState.randomizeCurrencyName()
         },
         label: {
           Label("Generate with AI", systemImage: "apple.intelligence").frame(maxWidth: .infinity)
-        }
+        },
       )
       .controlSize(.large)
       .buttonStyle(.borderedProminent)

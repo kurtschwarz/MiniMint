@@ -14,12 +14,12 @@ struct OnboardingView: View {
 
         Button(
           action: {
-            self.appState.push(route: .setup)
+            appState.push(route: .setup)
           },
           label: {
             Text("Get Started")
               .frame(maxWidth: .infinity)
-          }
+          },
         )
         .tint(Color("primary_green"))
         .controlSize(.large)

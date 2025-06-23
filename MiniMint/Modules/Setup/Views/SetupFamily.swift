@@ -27,11 +27,11 @@ struct SetupFamilyView: View {
 
       Button(
         action: {
-          self.setupState.randomizeFamilyName()
+          setupState.randomizeFamilyName()
         },
         label: {
           Label("Generate with AI", systemImage: "apple.intelligence").frame(maxWidth: .infinity)
-        }
+        },
       )
       .controlSize(.large)
       .buttonStyle(.borderedProminent)

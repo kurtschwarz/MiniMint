@@ -9,20 +9,20 @@ enum AppRoute: Hashable {
 final class AppState: ObservableObject {
   @Published var path = NavigationPath()
 
-  func push (route: AppRoute) {
-    self.path.append(route)
+  func push(route: AppRoute) {
+    path.append(route)
   }
-  
-  func pop () {
-    self.path.removeLast()
+
+  func pop() {
+    path.removeLast()
   }
 }
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
   static var orientationLock = UIInterfaceOrientationMask.all
 
-  func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-    return AppDelegate.orientationLock
+  func application(_: UIApplication, supportedInterfaceOrientationsFor _: UIWindow?) -> UIInterfaceOrientationMask {
+    AppDelegate.orientationLock
   }
 }
 
@@ -31,14 +31,14 @@ struct MiniMintApp: App {
   @StateObject private var appState = AppState()
   @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
-  init () {
+  init() {
 //    UserDefaults.standard.register(defaults: [
 //      "completedOnboarding": false
 //    ])
   }
 
   @ViewBuilder
-  func view (route: AppRoute) -> some View {
+  func view(route: AppRoute) -> some View {
     switch route {
     case .onboarding:
       OnboardingView()
@@ -55,12 +55,12 @@ struct MiniMintApp: App {
         ZStack {
           OnboardingView()
         }
-          .navigationDestination(for: AppRoute.self) { route in
-            self.view(route: route)
-          }
+        .navigationDestination(for: AppRoute.self) { route in
+          view(route: route)
+        }
       }
       .accentColor(Color("primary_green"))
-      .environmentObject(self.appState)
+      .environmentObject(appState)
     }
   }
 }

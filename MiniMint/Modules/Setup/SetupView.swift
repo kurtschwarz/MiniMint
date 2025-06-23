@@ -21,55 +21,55 @@ final class SetupState: ObservableObject {
   @Published var familyName: String = ""
   @Published var currencyName: String = ""
   @Published var children: [SetupChildName] = [.init("")]
-  
+
   @Published var randomFamilyNames: [String] = []
   @Published var randomCurrencyNames: [String] = []
 
   init() {
     if let asset = NSDataAsset(name: "random_family_names") {
-      self.randomFamilyNames = try! JSONSerialization.jsonObject(with: asset.data, options: []) as! [String]
+      randomFamilyNames = try! JSONSerialization.jsonObject(with: asset.data, options: []) as! [String]
     }
 
     if let asset = NSDataAsset(name: "random_currency_names") {
-      self.randomCurrencyNames = try! JSONSerialization.jsonObject(with: asset.data, options: []) as! [String]
+      randomCurrencyNames = try! JSONSerialization.jsonObject(with: asset.data, options: []) as! [String]
     }
 
-    self.familyName = self.randomFamilyNames.randomElement() ?? ""
-    self.currencyName = self.randomCurrencyNames.randomElement() ?? ""
+    familyName = randomFamilyNames.randomElement() ?? ""
+    currencyName = randomCurrencyNames.randomElement() ?? ""
   }
-  
+
   func next() {
-    switch self.step {
+    switch step {
     case .setupFamily:
-      self.step = .setupCurrency
+      step = .setupCurrency
     case .setupCurrency:
-      self.step = .setupChildren
+      step = .setupChildren
     case .setupChildren:
-      self.step = .setupFamily
+      step = .setupFamily
     }
   }
 
   func previous() {
-    switch self.step {
+    switch step {
     case .setupFamily:
       return
     case .setupCurrency:
-      self.step = .setupFamily
+      step = .setupFamily
     case .setupChildren:
-      self.step = .setupCurrency
+      step = .setupCurrency
     }
   }
 
-  func randomizeFamilyName () {
-    self.familyName = self.randomFamilyNames.randomElement() ?? ""
+  func randomizeFamilyName() {
+    familyName = randomFamilyNames.randomElement() ?? ""
   }
 
-  func randomizeCurrencyName () {
-    self.currencyName = self.randomCurrencyNames.randomElement() ?? ""
+  func randomizeCurrencyName() {
+    currencyName = randomCurrencyNames.randomElement() ?? ""
   }
 
   @ViewBuilder
-  func view (step: SetupStep) -> some View {
+  func view(step: SetupStep) -> some View {
     switch step {
     case .setupFamily:
       SetupFamilyView()
@@ -92,28 +92,28 @@ struct SetupView: View {
   var body: some View {
     ZStack {
       Image("background_tile")
-          .resizable(resizingMode: .tile)
-          .ignoresSafeArea(.all)
+        .resizable(resizingMode: .tile)
+        .ignoresSafeArea(.all)
 
       VStack {
         Spacer()
 
-        VStack (alignment: .center) {
-          self.setupState.view(step: self.setupState.step)
-            .environmentObject(self.setupState)
+        VStack(alignment: .center) {
+          setupState.view(step: setupState.step)
+            .environmentObject(setupState)
 
           Button(
             action: {
-              if (self.setupState.step == .setupChildren) {
-                self.appState.push(route: .dashboard)
+              if setupState.step == .setupChildren {
+                appState.push(route: .dashboard)
               } else {
-                self.setupState.next()
+                setupState.next()
               }
             },
             label: {
-              Text(self.setupState.step == .setupChildren ? "Complete" : "Next")
+              Text(setupState.step == .setupChildren ? "Complete" : "Next")
                 .frame(maxWidth: .infinity)
-            }
+            },
           )
           .tint(Color("primary_green"))
           .buttonStyle(.borderedProminent)
@@ -123,37 +123,37 @@ struct SetupView: View {
         .padding(.horizontal, 20)
         .background(
           UnevenRoundedRectangle(
-            cornerRadii: .init(topLeading: 40, topTrailing: 40)
+            cornerRadii: .init(topLeading: 40, topTrailing: 40),
           )
           .fill(Color.white)
           .edgesIgnoringSafeArea(.bottom)
-          .shadow(radius: 60)
+          .shadow(radius: 60),
         )
       }
     }
     .toolbar {
-        ToolbarItem(placement: .topBarLeading) {
-          Button(
-            action:{
-              if (self.setupState.step == .setupFamily) {
-                self.appState.pop()
-              } else {
-                self.setupState.previous()
-              }
+      ToolbarItem(placement: .topBarLeading) {
+        Button(
+          action: {
+            if setupState.step == .setupFamily {
+              appState.pop()
+            } else {
+              setupState.previous()
             }
-          ) {
-            HStack {
-              Image(systemName: "chevron.left")
-                .scaleEffect(0.60)
-                .font(Font.title.weight(.semibold))
+          },
+        ) {
+          HStack {
+            Image(systemName: "chevron.left")
+              .scaleEffect(0.60)
+              .font(Font.title.weight(.semibold))
 
-              Text("Back")
-                .offset(x: -12)
-            }
+            Text("Back")
+              .offset(x: -12)
           }
-          .offset(x: -7)
-          .accentColor(Color("primary_green"))
         }
+        .offset(x: -7)
+        .accentColor(Color("primary_green"))
+      }
     }
     .navigationBarBackButtonHidden(true)
   }

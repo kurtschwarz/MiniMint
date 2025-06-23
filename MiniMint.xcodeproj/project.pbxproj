@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		57DAF5392DE5D2E70033405C /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 57DAF5382DE5D2E40033405C /* .gitignore */; };
 		57DAF55C2DE75BB70033405C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 57DAF55B2DE75BB70033405C /* PrivacyInfo.xcprivacy */; };
+		57ED595F2E09D61800694E0F /* .swiftformat in Resources */ = {isa = PBXBuildFile; fileRef = 57ED595E2E09D61600694E0F /* .swiftformat */; };
+		57ED59612E09D62000694E0F /* .swift-version in Resources */ = {isa = PBXBuildFile; fileRef = 57ED59602E09D61C00694E0F /* .swift-version */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +36,8 @@
 		57DAF5112DE540B30033405C /* MiniMintUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MiniMintUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		57DAF5382DE5D2E40033405C /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		57DAF55B2DE75BB70033405C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		57ED595E2E09D61600694E0F /* .swiftformat */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftformat; sourceTree = "<group>"; };
+		57ED59602E09D61C00694E0F /* .swift-version */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".swift-version"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -95,6 +99,8 @@
 		57DAF4ED2DE540B20033405C = {
 			isa = PBXGroup;
 			children = (
+				57ED59602E09D61C00694E0F /* .swift-version */,
+				57ED595E2E09D61600694E0F /* .swiftformat */,
 				57DAF55B2DE75BB70033405C /* PrivacyInfo.xcprivacy */,
 				57DAF4F82DE540B20033405C /* MiniMint */,
 				57DAF50A2DE540B30033405C /* MiniMintTests */,
@@ -234,8 +240,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57ED595F2E09D61800694E0F /* .swiftformat in Resources */,
 				57DAF55C2DE75BB70033405C /* PrivacyInfo.xcprivacy in Resources */,
 				57DAF5392DE5D2E70033405C /* .gitignore in Resources */,
+				57ED59612E09D62000694E0F /* .swift-version in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
