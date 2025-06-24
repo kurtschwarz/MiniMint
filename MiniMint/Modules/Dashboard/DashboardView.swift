@@ -1,6 +1,8 @@
+import SwiftData
 import SwiftUI
 
 struct DashboardView: View {
+
   // MARK: Internal
 
   var body: some View {
@@ -36,12 +38,17 @@ struct DashboardView: View {
 
   // MARK: Private
 
+  @Environment(\.modelContext) private var modelContext
+
   @EnvironmentObject private var appState: AppState
 }
 
 #Preview {
+  let preview = Preview()
+
   NavigationStack {
     DashboardView()
-      .environmentObject(AppState())
   }
+  .environmentObject(preview.appState)
+  .modelContainer(preview.modelContainer)
 }

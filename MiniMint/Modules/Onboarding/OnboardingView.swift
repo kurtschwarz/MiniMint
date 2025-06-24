@@ -41,6 +41,10 @@ struct OnboardingView: View {
 }
 
 #Preview {
-  OnboardingView()
-    .environmentObject(AppState())
+  let preview = Preview()
+
+  NavigationStack {
+    OnboardingView()
+  }
+  .environmentObject(preview.appState)
 }

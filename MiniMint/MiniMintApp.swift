@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 // MARK: - AppRoute
@@ -61,6 +62,7 @@ struct MiniMintApp: App {
       }
       .accentColor(Color("primary_green"))
       .environmentObject(appState)
+      .modelContainer(for: [Family.self, Currency.self, Person.self])
     }
   }
 

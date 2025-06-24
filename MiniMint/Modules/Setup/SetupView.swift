@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 // MARK: - SetupStep
@@ -185,8 +186,11 @@ struct SetupView: View {
 }
 
 #Preview {
+  let preview = Preview()
+
   NavigationStack {
     SetupView()
-      .environmentObject(AppState())
   }
+  .environmentObject(preview.appState)
+  .modelContainer(preview.modelContainer)
 }
