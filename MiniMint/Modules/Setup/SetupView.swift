@@ -32,16 +32,8 @@ final class SetupState: ObservableObject {
   // MARK: Lifecycle
 
   init() {
-    if let asset = NSDataAsset(name: "random_family_names") {
-      randomFamilyNames = try! JSONSerialization.jsonObject(with: asset.data, options: []) as! [String]
-    }
-
-    if let asset = NSDataAsset(name: "random_currency_names") {
-      randomCurrencyNames = try! JSONSerialization.jsonObject(with: asset.data, options: []) as! [String]
-    }
-
-    familyName = randomFamilyNames.randomElement() ?? ""
-    currencyName = randomCurrencyNames.randomElement() ?? ""
+    familyName = family.name
+    currencyName = currency.name
   }
 
   // MARK: Internal
@@ -54,6 +46,9 @@ final class SetupState: ObservableObject {
 
   @Published var randomFamilyNames: [String] = []
   @Published var randomCurrencyNames: [String] = []
+
+  var family = Family()
+  var currency = Currency()
 
   @ViewBuilder
   func view(step: SetupStep) -> some View {
@@ -71,8 +66,10 @@ final class SetupState: ObservableObject {
     switch step {
     case .setupFamily:
       step = .setupCurrency
+
     case .setupCurrency:
       step = .setupChildren
+
     case .setupChildren:
       step = .setupFamily
     }
@@ -90,23 +87,17 @@ final class SetupState: ObservableObject {
   }
 
   func randomizeFamilyName() {
-    familyName = randomFamilyNames.randomElement() ?? ""
+    familyName = Family.generateName()
   }
 
   func randomizeCurrencyName() {
-    currencyName = randomCurrencyNames.randomElement() ?? ""
+    currencyName = Currency.generateName()
   }
 }
 
 // MARK: - SetupView
 
 struct SetupView: View {
-
-  // MARK: Lifecycle
-
-  init() {
-    UIView.setAnimationsEnabled(false)
-  }
 
   // MARK: Internal
 
@@ -121,12 +112,19 @@ struct SetupView: View {
 
         VStack(alignment: .center) {
           setupState.view(step: setupState.step)
+            .environment(stateManager)
             .environmentObject(setupState)
 
           Button(
             action: {
               if setupState.step == .setupChildren {
-                appState.push(route: .dashboard)
+                modelContext.insert(setupState.family)
+                try? modelContext.save()
+
+                stateManager.family = setupState.family
+                stateManager.familyId = setupState.family.persistentModelID
+
+                navigate(.push(.home))
               } else {
                 setupState.next()
               }
@@ -157,7 +155,7 @@ struct SetupView: View {
         Button(
           action: {
             if setupState.step == .setupFamily {
-              appState.pop()
+              navigate(.back)
             } else {
               setupState.previous()
             }
@@ -181,7 +179,9 @@ struct SetupView: View {
 
   // MARK: Private
 
-  @EnvironmentObject private var appState: AppState
+  @Environment(\.navigate) private var navigate
+  @Environment(StateManager.self) private var stateManager: StateManager
+  @Environment(\.modelContext) private var modelContext: ModelContext
   @StateObject private var setupState = SetupState()
 }
 
@@ -191,6 +191,6 @@ struct SetupView: View {
   NavigationStack {
     SetupView()
   }
-  .environmentObject(preview.appState)
+  .environment(preview.stateManager)
   .modelContainer(preview.modelContainer)
 }

@@ -28,15 +28,15 @@ class Preview {
       )
 
       modelContainer.mainContext.insert(family)
+
+      stateManager = StateManager(modelContext: modelContainer.mainContext)
     } catch {
       fatalError("Could not initialize ModelContainer")
     }
-
-    appState = AppState()
   }
 
   // MARK: Internal
 
-  let modelContainer: ModelContainer
-  let appState: AppState
+  var modelContainer: ModelContainer
+  var stateManager: StateManager
 }

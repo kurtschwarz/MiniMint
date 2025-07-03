@@ -1,33 +1,48 @@
 import SwiftData
 import SwiftUI
 
-struct DashboardView: View {
+struct HomeView: View {
 
   // MARK: Internal
 
   var body: some View {
     VStack {
-      Text("Dashboard!")
+      Text("Home!")
+      Text("\(String(describing: stateManager.family?.name ?? ""))")
     }
     .toolbar(content: {
 //      ToolbarItem(placement: .topBarTrailing) {
 //        Button(
-//          action: {},
+//          action: { },
 //          label: {
 //            Image(systemName: "bell.badge")
 //              .foregroundStyle(.red, Color("primary_green"))
 //          },
 //        )
 //      }
+//
+//      ToolbarItem(placement: .topBarTrailing) {
+//        Button(
+//          action: { },
+//          label: {
+//            Image(systemName: "person")
+//              .foregroundStyle(Color("primary_green"))
+//          },
+//        )
+//      }
 
       ToolbarItem(placement: .topBarTrailing) {
         Button(
-          action: { },
+          action: {
+            stateManager.reset()
+          },
           label: {
-            Image(systemName: "person")
-              .foregroundStyle(Color("primary_green"))
+            Image(systemName: "trash.fill").foregroundStyle(Color.white)
+            Text("Reset").foregroundStyle(Color.white)
           },
         )
+        .buttonStyle(.borderedProminent)
+        .accentColor(Color.red)
       }
     })
     .padding(.horizontal, 20)
@@ -39,16 +54,15 @@ struct DashboardView: View {
   // MARK: Private
 
   @Environment(\.modelContext) private var modelContext
-
-  @EnvironmentObject private var appState: AppState
+  @Environment(StateManager.self) private var stateManager: StateManager
 }
 
 #Preview {
   let preview = Preview()
 
   NavigationStack {
-    DashboardView()
+    HomeView()
   }
-  .environmentObject(preview.appState)
+  .environment(preview.stateManager)
   .modelContainer(preview.modelContainer)
 }

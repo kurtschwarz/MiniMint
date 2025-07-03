@@ -15,7 +15,7 @@ struct OnboardingView: View {
 
         Button(
           action: {
-            appState.push(route: .setup)
+            navigate(.push(.setup))
           },
           label: {
             Text("Get Started")
@@ -37,7 +37,7 @@ struct OnboardingView: View {
 
   // MARK: Private
 
-  @EnvironmentObject private var appState: AppState
+  @Environment(\.navigate) private var navigate
 }
 
 #Preview {
@@ -46,5 +46,4 @@ struct OnboardingView: View {
   NavigationStack {
     OnboardingView()
   }
-  .environmentObject(preview.appState)
 }
