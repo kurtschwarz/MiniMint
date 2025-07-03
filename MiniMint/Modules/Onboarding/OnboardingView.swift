@@ -41,8 +41,6 @@ struct OnboardingView: View {
 }
 
 #Preview {
-  let preview = Preview()
-
   NavigationStack {
     OnboardingView()
   }

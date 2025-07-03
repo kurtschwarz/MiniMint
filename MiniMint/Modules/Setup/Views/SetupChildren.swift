@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SetupChildrenView: View {
 
-  // MARK: Internal
+  @State var setupCoordinator: SetupCoordinator
 
   var body: some View {
     VStack {
@@ -24,10 +24,10 @@ struct SetupChildrenView: View {
         ],
         alignment: .trailing,
         content: {
-          ForEach($setupState.children, id: \.id, content: { $child in
+          ForEach($setupCoordinator.people, id: \.persistentModelID, content: { $person in
             TextField(
               "",
-              text: $child.value,
+              text: $person.name,
               prompt: Text("Child's name"),
             )
             .padding()
@@ -37,40 +37,42 @@ struct SetupChildrenView: View {
 
             Button(
               action: {
-                guard let index = setupState.children.firstIndex(
-                  where: { $0.id == child.id },
+                guard let index = setupCoordinator.people.firstIndex(
+                  where: { $0.persistentModelID == person.persistentModelID },
                 ) else {
                   return
                 }
 
-                setupState.children.remove(at: index)
+                setupCoordinator.people.remove(at: index)
               },
               label: { Label("", systemImage: "minus.circle.fill") },
             )
-            .disabled(setupState.children.count <= 1)
+            .disabled(setupCoordinator.people.count <= 1)
             .accentColor(Color.red)
           })
         },
       )
 
       Button(action: {
-        setupState.children.append(.init(""))
+        setupCoordinator.people.append(.init(name: "", role: .child))
       }, label: {
         Text("Add another").frame(maxWidth: .infinity)
       })
       .controlSize(.large)
       .buttonStyle(.borderedProminent)
       .accentColor(Color.gray)
-      .disabled(setupState.children.count > 4)
+      .disabled(setupCoordinator.people.count > 4)
     }
   }
 
-  // MARK: Private
-
-  @EnvironmentObject private var setupState: SetupState
 }
 
 #Preview {
-  SetupChildrenView()
-    .environmentObject(SetupState())
+  let preview = Preview()
+
+  SetupChildrenView(
+    setupCoordinator: SetupCoordinator(
+      modelContext: preview.modelContainer.mainContext,
+    )
+  )
 }

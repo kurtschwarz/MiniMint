@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SetupCurrencyView: View {
 
-  // MARK: Internal
+  @State var setupCoordinator: SetupCoordinator
 
   var body: some View {
     VStack {
@@ -21,7 +21,7 @@ struct SetupCurrencyView: View {
         .padding(.bottom, 30)
         .lineSpacing(6)
 
-      TextField("", text: $setupState.currencyName, prompt: Text("Currency Name"))
+      TextField("", text: $setupCoordinator.currency.name, prompt: Text("Currency Name"))
         .padding()
         .foregroundStyle(Color.black)
         .background(Color.gray.opacity(0.1))
@@ -30,7 +30,7 @@ struct SetupCurrencyView: View {
 
       Button(
         action: {
-          setupState.randomizeCurrencyName()
+          setupCoordinator.currency.name = Currency.generateName()
         },
         label: {
           Label("Generate with AI", systemImage: "apple.intelligence").frame(maxWidth: .infinity)
@@ -42,12 +42,14 @@ struct SetupCurrencyView: View {
     }
   }
 
-  // MARK: Private
-
-  @EnvironmentObject private var setupState: SetupState
 }
 
 #Preview {
-  SetupCurrencyView()
-    .environmentObject(SetupState())
+  let preview = Preview()
+
+  SetupCurrencyView(
+    setupCoordinator: SetupCoordinator(
+      modelContext: preview.modelContainer.mainContext,
+    ),
+  )
 }

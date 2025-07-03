@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SetupFamilyView: View {
 
-  // MARK: Internal
+  @State var setupCoordinator: SetupCoordinator
 
   var body: some View {
     VStack {
@@ -20,7 +20,7 @@ struct SetupFamilyView: View {
         .foregroundStyle(Color("primary_green"))
         .padding(.bottom, 30)
 
-      TextField("", text: $setupState.familyName, prompt: Text("Family Name"))
+      TextField("", text: $setupCoordinator.family.name, prompt: Text("Family Name"))
         .padding()
         .foregroundStyle(Color.black)
         .background(Color.gray.opacity(0.1))
@@ -28,7 +28,7 @@ struct SetupFamilyView: View {
 
       Button(
         action: {
-          setupState.randomizeFamilyName()
+          setupCoordinator.family.name = Family.generateName()
         },
         label: {
           Label("Generate with AI", systemImage: "apple.intelligence").frame(maxWidth: .infinity)
@@ -40,12 +40,14 @@ struct SetupFamilyView: View {
     }
   }
 
-  // MARK: Private
-
-  @EnvironmentObject private var setupState: SetupState
 }
 
 #Preview {
-  SetupFamilyView()
-    .environmentObject(SetupState())
+  let preview = Preview()
+
+  SetupFamilyView(
+    setupCoordinator: SetupCoordinator(
+      modelContext: preview.modelContainer.mainContext,
+    )
+  )
 }

@@ -62,11 +62,7 @@ protocol StateManagerProtocol: AnyObject, Observable {
         return nil
       }
 
-      if data != nil {
-        return try? JSONDecoder().decode(Family.ID.self, from: data)
-      }
-
-      return nil
+      return try? JSONDecoder().decode(Family.ID.self, from: data)
     }
 
     set {
