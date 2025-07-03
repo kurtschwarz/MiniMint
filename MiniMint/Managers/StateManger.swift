@@ -93,7 +93,19 @@ protocol StateManagerProtocol: AnyObject, Observable {
   }
 
   func reset() {
-    family = nil
+    guard let family else {
+      return
+    }
+
+    do {
+      try modelContext.transaction {
+        modelContext.delete(family)
+        try modelContext.save()
+      }
+    } catch {
+      print("Unexpected error: \(error).")
+    }
+
     familyId = nil
     hasCompletedSetup = false
     path = []

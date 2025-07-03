@@ -11,7 +11,7 @@ final class Family {
     name: String? = nil,
     avatar: Avatar? = nil,
     currency: Currency? = nil,
-    people: [Person]? = nil,
+    people: [Person] = [],
   ) {
     self.name = name ?? Family.generateName()
     self.avatar = avatar
@@ -36,7 +36,7 @@ final class Family {
   @Attribute(.unique) var name: String
   @Relationship(.unique, deleteRule: .cascade) var avatar: Avatar?
   @Relationship(.unique, deleteRule: .cascade) var currency: Currency?
-  @Relationship(deleteRule: .cascade) var people: [Person]?
+  @Relationship(deleteRule: .cascade) var people: [Person]
 
   static func generateName() -> String {
     if Family.generatedNamesCache.current.isEmpty {

@@ -10,9 +10,11 @@ final class Currency {
   init(
     name: String? = nil,
     avatar: Avatar? = nil,
+    family: Family? = nil,
   ) {
     self.name = name ?? Currency.generateName()
     self.avatar = avatar
+    self.family = family
   }
 
   // MARK: Internal
@@ -31,6 +33,7 @@ final class Currency {
 
   @Attribute(.unique) var name: String
   @Relationship(.unique, deleteRule: .cascade) var avatar: Avatar?
+  @Relationship(.unique, inverse: \Family.currency) var family: Family?
 
   static func generateName() -> String {
     if Currency.generatedNamesCache.current.isEmpty {
