@@ -22,21 +22,23 @@ class Preview {
         configurations: config,
       )
 
-      let family = Family(
+      family = Family(
         name: "Jetsons",
         avatar: Avatar(emoji: 0x1F680),
         currency: Currency(name: "Credits"),
         people: [
-          Person(name: "George", role: .parent),
-          Person(name: "Jane", role: .parent),
-          Person(name: "Judy", role: .child),
-          Person(name: "Elroy", role: .child),
+          Person(name: "George", role: .parent, avatar: .init()),
+          Person(name: "Jane", role: .parent, avatar: .init()),
+          Person(name: "Judy", role: .child, avatar: .init(emoji: 0x1F9A9, background: 0xeee0ff)),
+          Person(name: "Elroy", role: .child, avatar: .init(emoji: 0x1F680, background: 0xdffffd)),
         ],
       )
 
-      modelContainer.mainContext.insert(family)
+//      modelContainer.mainContext.insert(family)
+//      try? modelContainer.mainContext.save()
 
       stateManager = StateManager(modelContext: modelContainer.mainContext)
+      stateManager.family = family
     } catch {
       fatalError("Could not initialize ModelContainer")
     }
@@ -46,4 +48,6 @@ class Preview {
 
   var modelContainer: ModelContainer
   var stateManager: StateManager
+
+  var family: Family
 }

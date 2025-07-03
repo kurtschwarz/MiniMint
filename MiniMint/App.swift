@@ -22,7 +22,13 @@ extension EnvironmentValues {
     ])
 
     do {
-      modelContainer = try ModelContainer(for: schema)
+      #if DEBUG
+      let modelConfig = ModelConfiguration(isStoredInMemoryOnly: true)
+      #else
+      let modelConfig = ModelConfiguration(isStoredInMemoryOnly: false)
+      #endif
+
+      modelContainer = try ModelContainer(for: schema, configurations: modelConfig)
 
       stateManager = StateManager(modelContext: modelContainer.mainContext)
       stateManager.restore()

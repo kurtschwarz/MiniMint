@@ -7,8 +7,20 @@ struct HomeView: View {
 
   var body: some View {
     VStack {
-      Text("Home!")
-      Text("\(String(describing: stateManager.family?.name ?? ""))")
+      Section(
+        header: HStack {
+          Text("Your Crew")
+            .font(.system(size: 16, weight: .bold))
+          Spacer()
+        },
+      ) {
+        PeopleList(
+          people: (stateManager.family?.people ?? []).filter { person in person.role == .child },
+          showAddPersonButton: true,
+        )
+      }
+
+      Spacer()
     }
     .toolbar(content: {
 //      ToolbarItem(placement: .topBarTrailing) {
