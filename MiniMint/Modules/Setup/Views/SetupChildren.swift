@@ -54,7 +54,13 @@ struct SetupChildrenView: View {
       )
 
       Button(action: {
-        setupCoordinator.people.append(.init(name: "", role: .child))
+        setupCoordinator.people.append(
+          .init(
+            name: "",
+            role: .child,
+            avatar: Avatar.generate(),
+          ),
+        )
       }, label: {
         Text("Add another").frame(maxWidth: .infinity)
       })

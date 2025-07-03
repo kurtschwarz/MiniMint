@@ -59,7 +59,7 @@ struct HomeView: View {
     })
     .padding(.horizontal, 20)
     .padding(.vertical, 20)
-    .navigationBarTitle("")
+    .background(Color.white, ignoresSafeAreaEdges: .all)
     .navigationBarBackButtonHidden(true)
   }
 

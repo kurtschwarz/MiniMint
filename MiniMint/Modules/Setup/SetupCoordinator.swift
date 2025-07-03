@@ -18,7 +18,9 @@ import SwiftUI
 
   var family = Family()
   var currency = Currency()
-  var people: [Person] = [.init(name: "", role: .child)]
+  var people: [Person] = [
+    .init(name: "", role: .child, avatar: Avatar.generate()),
+  ]
 
   @ObservationIgnored() var stateManager: StateManager? = nil
   @ObservationIgnored() var modelContext: ModelContext? = nil

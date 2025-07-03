@@ -14,9 +14,10 @@ final class Person {
 
   // MARK: Lifecycle
 
-  init(name: String, role: Role, family: Family? = nil, avatar: Avatar? = nil) {
+  init(name: String, role: Role, balance: Int64 = 0, family: Family? = nil, avatar: Avatar? = nil) {
     self.name = name
     self.role = role
+    self.balance = balance
     self.family = family
     self.avatar = avatar
   }
@@ -25,6 +26,7 @@ final class Person {
 
   var name: String
   var role: Role
+  var balance: Int64 = 0
   @Relationship(.unique, deleteRule: .cascade) var avatar: Avatar?
   @Relationship(inverse: \Family.people) var family: Family?
 }

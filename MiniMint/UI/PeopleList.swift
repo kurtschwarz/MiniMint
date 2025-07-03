@@ -15,13 +15,29 @@ struct PeopleList: View {
     ScrollView(.horizontal) {
       LazyHStack(alignment: .top) {
         ForEach(people) { person in
-          VStack {
+          VStack(alignment: .center, spacing: 0) {
             if person.avatar != nil {
               CircleAvatar(avatar: person.avatar!)
             }
 
             Text(person.name)
-              .font(.system(size: 14, weight: .medium))
+              .font(.system(size: 16, weight: .bold))
+              .padding(.top, 10)
+              .padding(.bottom, 2)
+
+            HStack {
+              Text(String(person.balance))
+                .font(.system(size: 14, weight: .medium))
+            }
+            .padding(.trailing, 11)
+            .background(
+              alignment: .trailing,
+              content: {
+                Image("coin_icon")
+                  .resizable()
+                  .frame(width: 16, height: 16)
+              },
+            )
           }
         }
 

@@ -24,4 +24,8 @@ final class Avatar {
   var emoji: UInt32? = nil
   var background: UInt? = nil
   @Attribute(.externalStorage) var image: Data? = nil
+
+  static func generate() -> Avatar {
+    return .init(emoji: 0x1F424, background: 0xFFE0E2)
+  }
 }
