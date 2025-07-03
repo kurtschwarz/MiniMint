@@ -19,7 +19,7 @@ final class Currency {
 
   static var generatedNamesCache: (options: [String], current: [String]) = {
     if let asset = NSDataAsset(name: "random_currency_names") {
-      let options = try! JSONSerialization.jsonObject(with: asset.data, options: []) as! [String]
+      let options = (try! JSONSerialization.jsonObject(with: asset.data, options: []) as! [String]).shuffled()
       return (
         options: options,
         current: options.map { $0 },
