@@ -15,6 +15,7 @@ extension EnvironmentValues {
 
   init() {
     let schema = Schema([
+      Avatar.self,
       Family.self,
       Currency.self,
       Person.self,

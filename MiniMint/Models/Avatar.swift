@@ -9,7 +9,7 @@ final class Avatar {
   init(
     symbol: String? = nil,
     emoji: UInt32? = nil,
-    background: String? = nil,
+    background: UInt32? = nil,
     image: Data? = nil,
   ) {
     self.symbol = symbol
@@ -22,6 +22,6 @@ final class Avatar {
 
   var symbol: String? = nil
   var emoji: UInt32? = nil
-  var background: String? = nil
+  var background: UInt32? = nil
   @Attribute(.externalStorage) var image: Data? = nil
 }

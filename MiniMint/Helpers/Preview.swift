@@ -7,11 +7,18 @@ class Preview {
   // MARK: Lifecycle
 
   init() {
+    let schema = Schema([
+      Avatar.self,
+      Family.self,
+      Currency.self,
+      Person.self,
+    ])
+
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
 
     do {
       modelContainer = try ModelContainer(
-        for: Family.self, Currency.self, Person.self,
+        for: schema,
         configurations: config,
       )
 
