@@ -4,9 +4,10 @@ struct PeopleList: View {
 
   // MARK: Lifecycle
 
-  init(people: [Person] = [], showAddPersonButton: Bool = false) {
+  init(people: [Person] = [], showAddPersonButton: Bool = false, showBalance: Bool = true) {
     self.people = people
     self.showAddPersonButton = showAddPersonButton
+    self.showBalance = showBalance
   }
 
   // MARK: Internal
@@ -25,19 +26,21 @@ struct PeopleList: View {
               .padding(.top, 10)
               .padding(.bottom, 2)
 
-            HStack {
-              Text(String(person.balance))
-                .font(.system(size: 14, weight: .medium))
+            if self.showBalance {
+              HStack {
+                Text(String(person.balance))
+                  .font(.system(size: 14, weight: .medium))
+              }
+              .padding(.trailing, 11)
+              .background(
+                alignment: .trailing,
+                content: {
+                  Image("coin_icon")
+                    .resizable()
+                    .frame(width: 16, height: 16)
+                },
+              )
             }
-            .padding(.trailing, 11)
-            .background(
-              alignment: .trailing,
-              content: {
-                Image("coin_icon")
-                  .resizable()
-                  .frame(width: 16, height: 16)
-              },
-            )
           }
           .onTapGesture {
             navigate(.push(.person(person.persistentModelID)))
@@ -66,6 +69,7 @@ struct PeopleList: View {
 
   private var people: [Person] = []
   private var showAddPersonButton = false
+  private var showBalance = true
 
 }
 

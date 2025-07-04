@@ -14,10 +14,33 @@ struct HomeView: View {
           Spacer()
         },
       ) {
-        PeopleList(
-          people: (stateManager.family?.people ?? []).filter { person in person.role == .child },
-          showAddPersonButton: true,
-        )
+        Section(
+          header: HStack {
+            Text("Littles")
+              .font(.system(size: 14, weight: .medium))
+            Spacer()
+          }.padding(.top, 2),
+        ) {
+          PeopleList(
+            people: (stateManager.family?.people ?? []).filter { person in person.role == .child },
+            showAddPersonButton: true,
+          )
+          .padding(.bottom, 18)
+        }
+
+        Section(
+          header: HStack {
+            Text("Adults")
+              .font(.system(size: 14, weight: .medium))
+            Spacer()
+          },
+        ) {
+          PeopleList(
+            people: (stateManager.family?.people ?? []).filter { person in person.role == .parent },
+            showAddPersonButton: true,
+            showBalance: false,
+          )
+        }
       }
 
       Spacer()
