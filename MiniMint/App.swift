@@ -22,11 +22,7 @@ extension EnvironmentValues {
     ])
 
     do {
-      #if DEBUG
-      let modelConfig = ModelConfiguration(isStoredInMemoryOnly: true)
-      #else
       let modelConfig = ModelConfiguration(isStoredInMemoryOnly: false)
-      #endif
 
       modelContainer = try ModelContainer(for: schema, configurations: modelConfig)
 
@@ -53,6 +49,7 @@ extension EnvironmentValues {
         self.stateManager.navigate(type: type)
       }
       .environment(stateManager)
+      .accentColor(Color("primary_green"))
     }
     .modelContainer(modelContainer)
   }
@@ -73,6 +70,8 @@ extension EnvironmentValues {
       SetupView()
     case .home:
       HomeView()
+    case .person(let id):
+      PersonView(id: id)
     }
   }
 

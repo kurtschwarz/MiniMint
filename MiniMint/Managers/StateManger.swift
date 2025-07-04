@@ -9,6 +9,7 @@ enum Route: Hashable {
   case onboarding
   case setup
   case home
+  case person(PersistentIdentifier)
 }
 
 // MARK: - NavigateAction

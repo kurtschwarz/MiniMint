@@ -21,7 +21,7 @@ struct PeopleList: View {
             }
 
             Text(person.name)
-              .font(.system(size: 16, weight: .bold))
+              .font(.system(size: 14, weight: .bold))
               .padding(.top, 10)
               .padding(.bottom, 2)
 
@@ -38,6 +38,9 @@ struct PeopleList: View {
                   .frame(width: 16, height: 16)
               },
             )
+          }
+          .onTapGesture {
+            navigate(.push(.person(person.persistentModelID)))
           }
         }
 
@@ -59,8 +62,9 @@ struct PeopleList: View {
 
   // MARK: Private
 
-  private var people: [Person] = []
+  @Environment(\.navigate) private var navigate
 
+  private var people: [Person] = []
   private var showAddPersonButton = false
 
 }
