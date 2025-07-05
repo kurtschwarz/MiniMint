@@ -5,11 +5,17 @@ import SwiftUI
 
 // MARK: - Route
 
-enum Route: Hashable {
+enum Route: Identifiable, Hashable {
   case onboarding
   case setup
   case home
   case person(PersistentIdentifier)
+  case editAvatar(PersistentIdentifier)
+
+  // MARK: Internal
+
+  var id: Self { return self }
+
 }
 
 // MARK: - NavigateAction
@@ -30,6 +36,7 @@ enum NavigationType: Hashable {
   case push(Route)
   case unwind(Route)
   case back
+  case sheet(Route)
 }
 
 // MARK: - StateManagerProtocol
@@ -54,8 +61,10 @@ protocol StateManagerProtocol: AnyObject, Observable {
   // MARK: Internal
 
   var family: Family? = nil
-  var path: [Route] = []
   var hasCompletedSetup = false
+
+  var path: [Route] = []
+  var sheet: Route? = nil
 
   var familyId: PersistentIdentifier? {
     get {
@@ -90,6 +99,9 @@ protocol StateManagerProtocol: AnyObject, Observable {
 
     case .back:
       path.removeLast()
+
+    case .sheet(let route):
+      sheet = route
     }
   }
 

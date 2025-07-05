@@ -44,6 +44,11 @@ extension EnvironmentValues {
         .navigationDestination(for: Route.self) { route in
           view(route: route)
         }
+        .sheet(item: self.$stateManager.sheet) { route in
+          view(route: route)
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.automatic)
+        }
       }
       .onNavigate { type in
         self.stateManager.navigate(type: type)
@@ -72,6 +77,8 @@ extension EnvironmentValues {
       HomeView()
     case .person(let id):
       PersonView(id: id)
+    case .editAvatar(let id):
+      EditAvatarView(id: id)
     }
   }
 

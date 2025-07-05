@@ -23,6 +23,9 @@ struct PersonView: View {
           avatar: (person?.avatar)!,
           size: .large,
         )
+        .onTapGesture {
+          navigate(.sheet(.editAvatar(person!.avatar!.persistentModelID)))
+        }
       }
 
       Text("\(person?.name ?? "Unknown")")
@@ -40,6 +43,7 @@ struct PersonView: View {
   // MARK: Private
 
   @Environment(\.modelContext) private var modelContext
+  @Environment(\.navigate) private var navigate
 }
 
 #Preview {
