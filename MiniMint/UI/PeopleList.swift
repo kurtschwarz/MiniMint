@@ -18,7 +18,10 @@ struct PeopleList: View {
         ForEach(people) { person in
           VStack(alignment: .center, spacing: 0) {
             if person.avatar != nil {
-              CircleAvatar(avatar: person.avatar!)
+              CircleAvatar(
+                avatar: person.avatar!,
+                size: .medium,
+              )
             }
 
             Text(person.name)

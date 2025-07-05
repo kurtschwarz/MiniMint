@@ -18,8 +18,15 @@ struct PersonView: View {
 
   var body: some View {
     VStack {
-      Text("Person")
+      if person?.avatar != nil {
+        CircleAvatar(
+          avatar: (person?.avatar)!,
+          size: .large,
+        )
+      }
+
       Text("\(person?.name ?? "Unknown")")
+        .font(.system(size: 24, weight: .bold))
     }
     .onAppear(perform: loadPerson)
   }
@@ -40,7 +47,7 @@ struct PersonView: View {
 
   NavigationStack {
     PersonView(
-      person: .init(name: "Test", role: .child),
+      id: preview.family.people.first?.persistentModelID,
     )
   }
   .modelContainer(preview.modelContainer)
