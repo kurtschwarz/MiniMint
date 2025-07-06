@@ -71,14 +71,18 @@ extension EnvironmentValues {
     switch route {
     case .onboarding:
       OnboardingView()
+
     case .setup:
       SetupView()
+
     case .home:
       HomeView()
-    case .person(let id):
-      PersonView(id: id)
-    case .editAvatar(let id):
-      EditAvatarView(id: id)
+
+    case .person(let personId):
+      PersonView(personId: personId)
+
+    case .editAvatar(let avatarId):
+      EditAvatarView(avatarId: avatarId)
     }
   }
 

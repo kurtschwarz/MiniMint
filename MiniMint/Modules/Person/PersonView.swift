@@ -5,8 +5,11 @@ struct PersonView: View {
 
   // MARK: Lifecycle
 
-  init(id: PersistentIdentifier? = nil, person: Person? = nil) {
-    self.id = id
+  init(
+    personId: PersistentIdentifier? = nil,
+    person: Person? = nil,
+  ) {
+    self.personId = personId
     self.person = person
   }
 
@@ -14,10 +17,10 @@ struct PersonView: View {
 
   @State var person: Person? = nil
 
-  var id: PersistentIdentifier? = nil
+  var personId: PersistentIdentifier? = nil
 
   var body: some View {
-    VStack {
+    VStack(alignment: .center) {
       if person?.avatar != nil {
         CircleAvatar(
           avatar: (person?.avatar)!,
@@ -30,13 +33,15 @@ struct PersonView: View {
 
       Text("\(person?.name ?? "Unknown")")
         .font(.system(size: 24, weight: .bold))
+
+      Spacer()
     }
     .onAppear(perform: loadPerson)
   }
 
   func loadPerson() {
-    if id != nil && person == nil {
-      person = modelContext.model(for: id!) as? Person
+    if personId != nil && person == nil {
+      person = modelContext.model(for: personId!) as? Person
     }
   }
 
@@ -51,7 +56,7 @@ struct PersonView: View {
 
   NavigationStack {
     PersonView(
-      id: preview.family.people.first?.persistentModelID,
+      personId: preview.family.people.first?.persistentModelID,
     )
   }
   .modelContainer(preview.modelContainer)
