@@ -1,10 +1,13 @@
 import Foundation
 import SwiftData
+import SwiftUI
 
 @Model
 final class Avatar: Codable {
 
   // MARK: Lifecycle
+
+  // #Unique<Avatar>([\.symbol, \.background], [\.emoji, \.background])
 
   init(
     symbol: String? = nil,
@@ -14,7 +17,7 @@ final class Avatar: Codable {
   ) {
     self.symbol = symbol
     self.emoji = emoji
-    self.background = background
+    self.background = background ?? Avatar.backgroundOptions.first
     self.image = image
   }
 
@@ -44,6 +47,23 @@ final class Avatar: Codable {
     case emoji
     case background
   }
+
+  static var backgroundOptions: [UInt] = {
+    if let asset = NSDataAsset(name: "avatar_backgrounds") {
+      let colors = (try! JSONSerialization.jsonObject(with: asset.data, options: []) as! [String])
+      return colors.map {
+        var colorString = String($0)
+
+        if colorString.hasPrefix("0x") {
+          colorString.removeFirst(2)
+        }
+
+        return UInt(colorString, radix: 16)!
+      }
+    }
+
+    return []
+  }()
 
   var symbol: String? = nil
   var emoji: UInt32? = nil

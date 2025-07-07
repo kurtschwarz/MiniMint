@@ -29,20 +29,20 @@ enum AvatarSize: Int, CaseIterable {
 // MARK: - CircleAvatar
 
 struct CircleAvatar: View {
-  var avatar: Avatar
+  var avatar: Avatar?
   var size = AvatarSize.small
 
   var body: some View {
     VStack {
-      if avatar.emoji != nil {
-        Text(String(UnicodeScalar(avatar.emoji!)!))
+      if avatar?.emoji != nil {
+        Text(String(UnicodeScalar(avatar!.emoji!)!))
           .font(.system(size: size.fontSize))
       }
     }
     .frame(width: size.frameSize, height: size.frameSize)
     .background(
-      avatar.background != nil
-        ? Color(hex: avatar.background!)
+      avatar?.background != nil
+        ? Color(hex: avatar!.background!)
         : Color.gray
     )
     .cornerRadius(size.frameSize / 2)

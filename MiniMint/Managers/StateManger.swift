@@ -11,7 +11,7 @@ enum Route: Identifiable, Hashable {
   case setup
   case home
   case person(PersistentIdentifier)
-  case editAvatar(PersistentIdentifier)
+  case selectAvatar(PersistentIdentifier)
 
   // MARK: Internal
 
@@ -37,7 +37,7 @@ enum NavigationType: Hashable {
   case push(Route)
   case unwind(Route)
   case back
-  case sheet(Route)
+  case sheet(Route, PresentationDetent? = .medium)
 }
 
 // MARK: - StateManagerProtocol
@@ -47,6 +47,8 @@ protocol StateManagerProtocol: AnyObject, Observable {
   var familyId: PersistentIdentifier? { get set }
 
   var hasCompletedSetup: Bool { get set }
+
+  var sheetPresentationDetent: PresentationDetent { get set }
 }
 
 // MARK: - StateManager
@@ -66,6 +68,8 @@ protocol StateManagerProtocol: AnyObject, Observable {
 
   var path: [Route] = []
   var sheet: Route? = nil
+  var secondarySheet: Route? = nil
+  var sheetPresentationDetent = PresentationDetent.medium
 
   var familyId: PersistentIdentifier? {
     get {
@@ -101,8 +105,9 @@ protocol StateManagerProtocol: AnyObject, Observable {
     case .back:
       path.removeLast()
 
-    case .sheet(let route):
+    case .sheet(let route, let presentationDetent):
       sheet = route
+      sheetPresentationDetent = presentationDetent ?? .medium
     }
   }
 
@@ -145,4 +150,7 @@ final class NullStateManager: StateManagerProtocol {
   var familyId: PersistentIdentifier? = nil
 
   var hasCompletedSetup = false
+
+  var sheet: Route? = nil
+  var sheetPresentationDetent = PresentationDetent.medium
 }

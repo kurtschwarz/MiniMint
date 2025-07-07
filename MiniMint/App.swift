@@ -46,7 +46,7 @@ extension EnvironmentValues {
         }
         .sheet(item: self.$stateManager.sheet) { route in
           view(route: route)
-            .presentationDetents([.medium, .large])
+            .presentationDetents([.large], selection: self.$stateManager.sheetPresentationDetent)
             .presentationDragIndicator(.automatic)
         }
       }
@@ -55,6 +55,7 @@ extension EnvironmentValues {
       }
       .environment(stateManager)
       .accentColor(Color("primary_green"))
+      .preferredColorScheme(.light)
     }
     .modelContainer(modelContainer)
   }
@@ -81,8 +82,8 @@ extension EnvironmentValues {
     case .person(let personId):
       PersonView(personId: personId)
 
-    case .editAvatar(let avatarId):
-      EditAvatarView(avatarId: avatarId)
+    case .selectAvatar(let avatarId):
+      SelectAvatarView(avatarId: avatarId)
     }
   }
 

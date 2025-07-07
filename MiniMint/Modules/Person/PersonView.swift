@@ -27,7 +27,7 @@ struct PersonView: View {
           size: .large,
         )
         .onTapGesture {
-          navigate(.sheet(.editAvatar(person!.avatar!.persistentModelID)))
+          navigate(.sheet(.selectAvatar(person!.avatar!.persistentModelID)))
         }
       }
 
