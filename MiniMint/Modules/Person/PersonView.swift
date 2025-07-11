@@ -34,8 +34,20 @@ struct PersonView: View {
       Text("\(person?.name ?? "Unknown")")
         .font(.system(size: 24, weight: .bold))
 
+      MiniMintUI.TabView(
+        tabs: [
+          .init(label: "Actions", view: AnyView(ActionsTab())),
+          .init(label: "Rewards", view: AnyView(RewardsTab())),
+          .init(label: "Ledger", view: AnyView(LedgerTab())),
+        ],
+        selectedTab: "Actions",
+      )
+      .padding(.top, 32)
+
       Spacer()
     }
+    .padding(.vertical, 40)
+    .padding(.horizontal, 20)
     .onAppear(perform: loadPerson)
   }
 
