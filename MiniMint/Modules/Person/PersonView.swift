@@ -20,10 +20,11 @@ struct PersonView: View {
   var personId: PersistentIdentifier? = nil
 
   var body: some View {
-    let tint = (person?.avatar != nil ? Color(hex: person!.avatar!.background!) : .accentColor)
-
     MintyUI.ScrollingPageView(
-      accentColor: tint,
+      tint: (person?.avatar != nil
+        ? Color(hex: person!.avatar!.background!)
+        : .accentColor
+      ),
     ) {
       VStack(alignment: .center) {
         if person?.avatar != nil {

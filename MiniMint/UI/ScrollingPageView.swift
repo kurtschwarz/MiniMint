@@ -40,17 +40,16 @@ extension MintyUI {
     // MARK: Lifecycle
 
     init(
-      accentColor: Color = .accentColor,
+      tint: Color = .accentColor,
       @ViewBuilder header: @escaping () -> Header,
       @PageLabelBuilder labels: @escaping () -> [PageLabel],
       @ViewBuilder pages: @escaping () -> Pages,
       onRefresh: @escaping () async -> Void = { },
     ) {
       self.header = header()
-      self.accentColor = accentColor
       self.labels = labels()
       self.pages = pages()
-      self.accentColor = accentColor
+      self.tint = tint
       self.onRefresh = onRefresh
 
       let count = labels().count
@@ -76,7 +75,7 @@ extension MintyUI {
               maxWidth: .infinity,
               maxHeight: calculateBackgroundHeight(proxy: $0),
             )
-            .foregroundStyle(self.accentColor.adjust(opacity: -0.5))
+            .foregroundStyle(self.tint.adjust(opacity: -0.5))
             .ignoresSafeArea(.all, edges: .top)
 
           ScrollView(.horizontal) {
@@ -219,7 +218,7 @@ extension MintyUI {
             }
             .frame(maxWidth: .infinity)
             .foregroundStyle(
-              activeTab == label.title ? self.accentColor.adjust(
+              activeTab == label.title ? self.tint.adjust(
                 saturation: 0.30,
                 brightness: -0.35,
               ) : .black
@@ -244,7 +243,7 @@ extension MintyUI {
                 .offset(x: proxy.size.width * progress, y: 0)
             }
             .foregroundStyle(
-              self.accentColor.adjust(
+              self.tint.adjust(
                 saturation: 0.30,
                 brightness: -0.35,
               )
@@ -256,7 +255,7 @@ extension MintyUI {
       .background {
         Rectangle().fill(.white)
         Rectangle()
-          .fill(accentColor.adjust(opacity: -0.5))
+          .fill(self.tint.adjust(opacity: -0.5))
       }
     }
 
@@ -292,7 +291,7 @@ extension MintyUI {
     @State private var mainScrollPhase = ScrollPhase.idle
     @State private var mainScrollGeometry = ScrollGeometry()
 
-    private var accentColor: Color
+    private var tint: Color
 
     private func calculateBackgroundHeight(
       proxy: GeometryProxy,
@@ -331,7 +330,7 @@ extension ScrollGeometry {
 
 #Preview {
   MintyUI.ScrollingPageView(
-    accentColor: Color(hex: 0xEEE0FF),
+    tint: Color(hex: 0xEEE0FF),
   ) {
     VStack {
       Text("Header")
