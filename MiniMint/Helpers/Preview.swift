@@ -12,6 +12,10 @@ class Preview {
       Family.self,
       Currency.self,
       Person.self,
+      Action.self,
+      ActionGroup.self,
+      Ledger.self,
+      LedgerEntry.self,
     ])
 
     let config = ModelConfiguration(isStoredInMemoryOnly: true)

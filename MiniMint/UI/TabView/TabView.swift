@@ -1,61 +1,43 @@
 import SwiftUI
 
-extension MiniMintUI {
+extension MintyUI {
 
-  struct Tab {
-    var label: String
-    var view: AnyView
-  }
+  struct Tab<Content: View>: View {
 
-  struct TabView: View {
+    // MARK: Lifecycle
 
-    var tabs: [Tab] = []
-
-    var body: some View {
-      HStack(spacing: 2) {
-        ForEach(tabs, id: \.self.label) { tab in
-          let selected = selectedTab == tab.label
-
-          Button(action: {
-            selectedTab = tab.label
-          }) {
-            Text(tab.label)
-              .foregroundStyle(selected ? .white : .primaryGreen)
-          }
-          .buttonStyle(.plain)
-          .padding(.vertical, 10)
-          .padding(.horizontal, 20)
-          .background(selected ? .primaryGreen : .clear)
-          .cornerRadius(32)
-        }
-      }
-      .padding(.vertical, 10)
-      .padding(.horizontal, 20)
-      .background(.backgroundPrimary)
-      .cornerRadius(32)
-
-      SwiftUI.TabView(selection: $selectedTab) {
-        ForEach(tabs, id: \.self.label) { tab in
-          tab.view
-            .tag(tab.label)
-        }
-      }
-      .tabViewStyle(.page)
+    init(title: String, @ViewBuilder content: @escaping () -> Content) {
+      self.title = title
+      self.content = content
     }
 
-    @State var selectedTab: String? = nil
+    // MARK: Internal
+
+    var title: String
+
+    var content: () -> Content
+
+    var body: some View {
+      Text("Tab")
+    }
+  }
+
+  struct TabView<Content: View>: View {
+
+    // MARK: Lifecycle
+
+    init(@ViewBuilder content: @escaping () -> Content) {
+      self.content = content
+    }
+
+    // MARK: Internal
+
+    var content: () -> Content
+
+    var body: some View {
+      content()
+    }
 
   }
 
-}
-
-#Preview {
-  MiniMintUI.TabView(
-    tabs: [
-      .init(label: "Tab 1", view: AnyView(Text("Tab 1 Content"))),
-      .init(label: "Tab 2", view: AnyView(Text("Tab 2 Content"))),
-      .init(label: "Tab 3", view: AnyView(Text("Tab 3 Content"))),
-    ],
-    selectedTab: "Tab 1",
-  )
 }

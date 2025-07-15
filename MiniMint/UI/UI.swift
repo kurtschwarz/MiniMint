@@ -1,1 +1,1 @@
-struct MiniMintUI { }
+struct MintyUI { }

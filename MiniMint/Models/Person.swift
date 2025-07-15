@@ -20,6 +20,8 @@ final class Person {
     self.balance = balance
     self.family = family
     self.avatar = avatar
+
+    ledger = .init()
   }
 
   // MARK: Internal
@@ -29,4 +31,5 @@ final class Person {
   var balance: Int64 = 0
   @Relationship(.unique, deleteRule: .cascade) var avatar: Avatar?
   @Relationship(inverse: \Family.people) var family: Family?
+  @Relationship(deleteRule: .cascade) var ledger: Ledger?
 }

@@ -12,11 +12,15 @@ final class Family {
     avatar: Avatar? = nil,
     currency: Currency? = nil,
     people: [Person] = [],
+    actionGroups: [ActionGroup] = [],
+    actions: [Action] = [],
   ) {
     self.name = name ?? Family.generateName()
     self.avatar = avatar
     self.currency = currency
     self.people = people
+    self.actionGroups = actionGroups.isEmpty ? ActionGroup.generateDefaults() : actionGroups
+    self.actions = actions
   }
 
   // MARK: Internal
@@ -37,6 +41,9 @@ final class Family {
   @Relationship(.unique, deleteRule: .cascade) var avatar: Avatar?
   @Relationship(.unique, deleteRule: .cascade) var currency: Currency?
   @Relationship(deleteRule: .cascade) var people: [Person]
+
+  @Relationship(deleteRule: .cascade) var actionGroups: [ActionGroup]
+  @Relationship(deleteRule: .cascade) var actions: [Action]
 
   static func generateName() -> String {
     if Family.generatedNamesCache.current.isEmpty {
