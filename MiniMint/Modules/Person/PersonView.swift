@@ -78,16 +78,17 @@ struct PersonView: View {
     }
     .navigationBarBackButtonHidden(true)
     .onAppear(perform: loadPerson)
+    .onChange(of: person?.avatar?.background) { _, newValue in
+      if newValue != nil {
+        toolbarTintColor = Color(hex: newValue!)
+          .adjust(saturation: 0.30, brightness: -0.35)
+      }
+    }
   }
 
   func loadPerson() {
     if personId != nil && person == nil {
       person = modelContext.model(for: personId!) as? Person
-    }
-
-    if person?.avatar?.background != nil {
-      toolbarTintColor = Color(hex: (person?.avatar?.background)!)
-        .adjust(saturation: 0.30, brightness: -0.35)
     }
   }
 
