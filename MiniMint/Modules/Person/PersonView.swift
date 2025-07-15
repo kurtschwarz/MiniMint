@@ -43,10 +43,12 @@ struct PersonView: View {
 
         Text("\(person?.name ?? "Unknown")")
           .font(.system(size: 24, weight: .bold))
+          .padding(.top, 10)
       }
       .frame(maxWidth: .infinity, alignment: .center)
-      .padding(.vertical, 40)
-      .padding(.horizontal, 20)
+      .padding(.top, 10)
+      .padding(.bottom, 30)
+      .padding(.horizontal, 10)
     } labels: {
       MintyUI.PageLabel(title: "Activity")
       MintyUI.PageLabel(title: "Actions")
