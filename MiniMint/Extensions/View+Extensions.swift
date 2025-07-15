@@ -10,26 +10,10 @@ struct OffsetKey: PreferenceKey {
   }
 }
 
-// MARK: - AccentColorAction
-
-struct AccentColorAction {
-  typealias Action = (Color) -> Void
-
-  let action: Action
-
-  func callAsFunction(_ color: Color) {
-    action(color)
-  }
-}
-
 extension View {
 
   func onNavigate(_ action: @escaping NavigateAction.Action) -> some View {
     environment(\.navigate, NavigateAction(action: action))
-  }
-
-  func onAccentColor(_ action: @escaping AccentColorAction.Action) -> some View {
-    environment(\.accentColor, AccentColorAction(action: action))
   }
 
   @ViewBuilder

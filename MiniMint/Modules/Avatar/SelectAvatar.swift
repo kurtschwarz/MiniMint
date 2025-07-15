@@ -38,7 +38,7 @@ struct SelectAvatarView: View {
     NavigationView {
       VStack {
         VStack {
-          CircleAvatar(
+          MintyUI.CircleAvatar(
             avatar: avatar,
             size: .large,
           )
@@ -73,7 +73,7 @@ struct SelectAvatarView: View {
           .cornerRadius(32)
 
           ForEach(emojiAvatars) { emojiAvatar in
-            CircleAvatar(
+            MintyUI.CircleAvatar(
               avatar: emojiAvatar,
               size: .medium,
             )

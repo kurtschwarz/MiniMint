@@ -1,30 +1,36 @@
 import SwiftData
 import SwiftUI
 
-struct ActionsList: View {
-  var actions: [Action] = []
+extension MintyUI {
+  struct ActionsList: View {
+    var actions: [Action] = []
 
-  var body: some View {
-    ScrollView(.vertical) {
-      LazyVStack(spacing: 14) {
-        ForEach(actions) { action in
-          HStack {
-            CircleAvatar(avatar: action.avatar, size: .small)
-            Text(action.name)
-            Spacer()
+    var body: some View {
+      ScrollView(.vertical) {
+        LazyVStack(spacing: 14) {
+          ForEach(actions) { action in
             HStack {
-              Text(String(action.amount))
-                .font(.system(size: 14, weight: .medium))
+              MintyUI.CircleAvatar(
+                avatar: action.avatar,
+                size: .small,
+              )
+
+              Text(action.name)
+              Spacer()
+              HStack {
+                Text(String(action.amount))
+                  .font(.system(size: 14, weight: .medium))
+              }
+              .padding(.trailing, 11)
+              .background(
+                alignment: .trailing,
+                content: {
+                  Image("coin_icon")
+                    .resizable()
+                    .frame(width: 16, height: 16)
+                },
+              )
             }
-            .padding(.trailing, 11)
-            .background(
-              alignment: .trailing,
-              content: {
-                Image("coin_icon")
-                  .resizable()
-                  .frame(width: 16, height: 16)
-              },
-            )
           }
         }
       }
@@ -35,7 +41,7 @@ struct ActionsList: View {
 #Preview {
   let preview = Preview()
 
-  ActionsList(
+  MintyUI.ActionsList(
     actions: [
       .init(name: "Help someone carry groceries or open doors", type: .deposit, amount: 30, avatar: .generate()),
       .init(name: "Give three genuine compliments to others", type: .deposit, amount: 30, avatar: .generate()),

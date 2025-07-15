@@ -52,7 +52,7 @@ struct EditAvatarView: View {
             ],
           ) {
             ForEach(Avatar.backgroundOptions, id: \.self, content: { background in
-              CircleAvatar(
+              MintyUI.CircleAvatar(
                 avatar: .init(
                   emoji: avatar.emoji,
                   background: background,

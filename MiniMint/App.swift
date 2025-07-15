@@ -4,7 +4,6 @@ import SwiftUI
 
 extension EnvironmentValues {
   @Entry var navigate = NavigateAction(action: { _ in })
-  @Entry var accentColor = AccentColorAction(action: { _ in })
   @Entry var stateManager: any StateManagerProtocol = NullStateManager()
 }
 
@@ -15,8 +14,6 @@ extension EnvironmentValues {
   // MARK: Lifecycle
 
   init() {
-    accentColor = .accentColor
-
     let schema = Schema([
       Avatar.self,
       Family.self,
@@ -60,11 +57,7 @@ extension EnvironmentValues {
       .onNavigate { type in
         self.stateManager.navigate(type: type)
       }
-      .onAccentColor { color in
-        self.accentColor = color
-      }
       .environment(stateManager)
-      .accentColor(accentColor)
       .preferredColorScheme(.light)
     }
     .modelContainer(modelContainer)
@@ -100,7 +93,6 @@ extension EnvironmentValues {
   // MARK: Private
 
   @State private var stateManager: StateManager
-  @State private var accentColor: Color
 
   private let modelContainer: ModelContainer
 }

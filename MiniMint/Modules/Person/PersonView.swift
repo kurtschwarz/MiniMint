@@ -28,12 +28,16 @@ struct PersonView: View {
     ) {
       VStack(alignment: .center) {
         if person?.avatar != nil {
-          CircleAvatar(
+          MintyUI.CircleAvatar(
             avatar: (person?.avatar)!,
             size: .large,
           )
           .onTapGesture {
-            navigate(.sheet(.selectAvatar(person!.avatar!.persistentModelID)))
+            navigate(
+              .sheet(
+                .selectAvatar(person!.avatar!.persistentModelID)
+              )
+            )
           }
         }
 
@@ -52,6 +56,27 @@ struct PersonView: View {
       Text("Actions View")
       Text("Rewards View")
     }
+    .toolbar {
+      ToolbarItem(placement: .topBarLeading) {
+        Button(
+          action: {
+            dismiss()
+          },
+        ) {
+          HStack {
+            Image(systemName: "chevron.left")
+              .scaleEffect(0.60)
+              .font(Font.title.weight(.semibold))
+
+            Text("Back")
+              .offset(x: -12)
+          }
+        }
+        .offset(x: -7)
+        .tint(toolbarTintColor)
+      }
+    }
+    .navigationBarBackButtonHidden(true)
     .onAppear(perform: loadPerson)
   }
 
@@ -60,17 +85,19 @@ struct PersonView: View {
       person = modelContext.model(for: personId!) as? Person
     }
 
-    accentColor(
-      Color(hex: (person?.avatar?.background)!)
+    if person?.avatar?.background != nil {
+      toolbarTintColor = Color(hex: (person?.avatar?.background)!)
         .adjust(saturation: 0.30, brightness: -0.35)
-    )
+    }
   }
 
   // MARK: Private
 
+  @State private var toolbarTintColor = Color.primaryGreen
+
   @Environment(\.modelContext) private var modelContext
   @Environment(\.navigate) private var navigate
-  @Environment(\.accentColor) private var accentColor
+  @Environment(\.dismiss) private var dismiss
 }
 
 #Preview {

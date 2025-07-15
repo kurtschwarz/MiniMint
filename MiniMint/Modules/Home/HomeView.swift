@@ -21,7 +21,7 @@ struct HomeView: View {
             Spacer()
           }.padding(.top, 2),
         ) {
-          PeopleList(
+          MintyUI.PeopleList(
             people: (stateManager.family?.people ?? []).filter { person in person.role == .child },
             showAddPersonButton: true,
           )
@@ -35,7 +35,7 @@ struct HomeView: View {
             Spacer()
           },
         ) {
-          PeopleList(
+          MintyUI.PeopleList(
             people: (stateManager.family?.people ?? []).filter { person in person.role == .parent },
             showAddPersonButton: true,
             showBalance: false,
