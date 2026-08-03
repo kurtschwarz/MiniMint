@@ -50,9 +50,24 @@ struct PersonView: View {
           }
         }
 
-        Text("\(person?.name ?? "Unknown")")
+        if let person {
+          TextField("Name", text: Binding(
+            get: { person.name },
+            set: { person.name = $0 },
+          ))
           .font(.system(size: 22, weight: .bold))
+          .multilineTextAlignment(.center)
+          .keyboardType(.asciiCapable)
+          .disableAutocorrection(true)
+          .submitLabel(.done)
+          .focused($isEditingName)
+          .onSubmit(commitName)
           .padding(.top, 10)
+        } else {
+          Text("Unknown")
+            .font(.system(size: 22, weight: .bold))
+            .padding(.top, 10)
+        }
       }
       .frame(maxWidth: .infinity, alignment: .center)
       .padding(.top, 5)
@@ -82,6 +97,11 @@ struct PersonView: View {
     }
     .navigationBarBackButtonHidden(true)
     .onAppear(perform: loadPerson)
+    .onChange(of: isEditingName) { _, editing in
+      if !editing {
+        commitName()
+      }
+    }
     .onChange(of: person?.avatar?.background) { _, newValue in
       if newValue != nil {
         toolbarTintColor = Color(hex: newValue!)
@@ -106,11 +126,35 @@ struct PersonView: View {
     if personId != nil && person == nil {
       person = modelContext.model(for: personId!) as? Person
     }
+
+    committedName = person?.name ?? ""
+  }
+
+  /// Trim and persist the edited name, restoring the last committed value when
+  /// the field is left empty.
+  func commitName() {
+    guard let person else {
+      return
+    }
+
+    let trimmed = person.name.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !trimmed.isEmpty else {
+      person.name = committedName
+      return
+    }
+
+    person.name = trimmed
+    committedName = trimmed
+
+    try? modelContext.save()
   }
 
   // MARK: Private
 
   @State private var toolbarTintColor = Color.primaryGreen
+  @State private var committedName = ""
+
+  @FocusState private var isEditingName: Bool
 
   @Environment(\.modelContext) private var modelContext
   @Environment(\.navigate) private var navigate
