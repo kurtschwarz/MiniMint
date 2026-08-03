@@ -10,16 +10,24 @@ extension MintyUI {
       self.group = group
       self.type = type
 
+      let groupID = group.persistentModelID
+      let typeValue = type.rawValue
+
       _actions = Query(
-        filter: #Predicate {
-          return $0.group != nil
+        filter: #Predicate<Action> { action in
+          if let actionGroup = action.group {
+            return actionGroup.persistentModelID == groupID && action.type == typeValue
+          } else {
+            return false
+          }
         },
+        sort: \.name,
       )
     }
 
     // MARK: Internal
 
-    @Query() var actions: [Action] = []
+    @Query var actions: [Action]
 
     var type: ActionType
     var group: ActionGroup
