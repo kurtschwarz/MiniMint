@@ -10,11 +10,13 @@ extension MintyUI {
       people: [Person] = [],
       showAddPersonButton: Bool = false,
       showBalance: Bool = true,
+      addPersonRole: Role = .child,
       isEditing: Binding<Bool> = .constant(false),
     ) {
       self.people = people
       self.showAddPersonButton = showAddPersonButton
       self.showBalance = showBalance
+      self.addPersonRole = addPersonRole
       _isEditing = isEditing
     }
 
@@ -64,9 +66,10 @@ extension MintyUI {
     private var people: [Person] = []
     private var showAddPersonButton = false
     private var showBalance = true
+    private var addPersonRole: Role = .child
 
     private var addButton: some View {
-      Button(action: { }) {
+      Button(action: { navigate(.sheet(.createPerson(addPersonRole))) }) {
         Image(systemName: "plus")
           .font(.system(size: 24, weight: .regular))
           .foregroundStyle(Color("dark_grey"))

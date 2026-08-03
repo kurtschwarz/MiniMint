@@ -49,6 +49,7 @@ struct HomeView: View {
           MintyUI.PeopleList(
             people: littles,
             showAddPersonButton: true,
+            addPersonRole: .child,
             isEditing: $isEditingCrew,
           )
           .padding(.bottom, 18)
@@ -65,6 +66,7 @@ struct HomeView: View {
             people: adults,
             showAddPersonButton: true,
             showBalance: false,
+            addPersonRole: .parent,
             isEditing: $isEditingCrew,
           )
         }

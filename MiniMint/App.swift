@@ -66,6 +66,9 @@ extension EnvironmentValues {
     case .person(let personId):
       PersonView(personId: personId)
 
+    case .createPerson(let role):
+      CreatePersonView(role: role)
+
     case .selectAvatar(let avatarId):
       SelectAvatarView(avatarId: avatarId)
 

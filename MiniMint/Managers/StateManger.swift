@@ -11,6 +11,7 @@ enum Route: Identifiable, Hashable {
   case setup
   case home
   case person(PersistentIdentifier)
+  case createPerson(Role)
   case selectAvatar(PersistentIdentifier)
 
   case createAction(PersistentIdentifier)
