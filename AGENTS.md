@@ -75,4 +75,7 @@ All models are registered in `SwiftDataManager`'s `Schema`. In DEBUG previews th
 
 ## Skills
 
-Reusable agent skills live in `.agents/skills/`. Before authoring, restructuring, or reviewing any skill, load [`.agents/skills/writing-skills/SKILL.md`](.agents/skills/writing-skills/SKILL.md) and follow it — it defines the naming (gerund form), frontmatter, progressive-disclosure, and metadata conventions, and bundles a validator (`scripts/validate-metadata.py`), a template (`assets/SKILL.template.md`), and a review checklist (`references/checklist.md`).
+Reusable agent skills live in `.agents/skills/` (exposed as `.claude/skills/` via a symlink so Claude Code auto-discovers them).
+
+- **`creating-commits`** — load [`.agents/skills/creating-commits/SKILL.md`](.agents/skills/creating-commits/SKILL.md) before making any commit. All commits in this repo must be Conventional Commits, cryptographically signed (`git commit -S`), and end with `Co-Authored-By: Claude (<MODEL>) <noreply@anthropic.com>`.
+- **`writing-skills`** — load [`.agents/skills/writing-skills/SKILL.md`](.agents/skills/writing-skills/SKILL.md) before authoring, restructuring, or reviewing any skill. It defines the naming (gerund form), frontmatter, progressive-disclosure, and metadata conventions, and bundles a validator (`scripts/validate-metadata.py`), a template (`assets/SKILL.template.md`), and a review checklist (`references/checklist.md`).
