@@ -1,0 +1,8 @@
+<type>(<scope>): <imperative subject, <=50 chars, no period>
+
+<Optional body. Only when the diff is not self-explanatory. Explain why,
+not what. Wrap at 72 characters. Use - for bullets.>
+
+<Optional issue refs, e.g. Closes #42>
+
+Co-Authored-By: Claude (<MODEL>) <noreply@anthropic.com>
