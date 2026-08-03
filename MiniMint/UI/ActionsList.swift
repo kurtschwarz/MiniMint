@@ -58,23 +58,31 @@ extension MintyUI {
 
     // MARK: Lifecycle
 
-    init(type: ActionType) {
+    init(familyId: PersistentIdentifier?, type: ActionType) {
       self.type = type
 
-//      _groups = Query(
-//        filter: #Predicate {
-//          guard let familyId = stateManager.familyId else {
-//            return false
-//          }
-//
-//          return $0.family?.persistentModelID == familyId
-//        },
-//      )
+      if let familyId {
+        _groups = Query(
+          filter: #Predicate<ActionGroup> { group in
+            if let family = group.family {
+              return family.persistentModelID == familyId
+            } else {
+              return false
+            }
+          },
+          sort: \.name,
+        )
+      } else {
+        _groups = Query(
+          filter: #Predicate<ActionGroup> { _ in false },
+          sort: \.name,
+        )
+      }
     }
 
     // MARK: Internal
 
-    @Query() var groups: [ActionGroup]
+    @Query var groups: [ActionGroup]
 
     var type: ActionType
 
@@ -84,51 +92,6 @@ extension MintyUI {
           ActionsSection(group: group, type: type)
         }
       }
-//      .onAppear {
-//        getActionGroups()
-//      }
-    }
-
-    // MARK: Private
-
-    @Environment(\.modelContext) private var modelContext
-    @Environment(StateManager.self) private var stateManager: StateManager
-
-    private func getActionGroups() {
-//      guard let familyId = stateManager.familyId else {
-//        return
-//      }
-//
-//      if groups.count == 0 {
-//        let filterByFamily = #Predicate<ActionGroup> {
-//          if let family = $0.family {
-//            return family.persistentModelID == familyId
-//          } else {
-//            return false
-//          }
-//        }
-//
-//        let filterByActionType = #Predicate<ActionGroup> {
-//          $0.actions.contains {
-//            $0.type == 1
-//          }
-//        }
-
-//        var descriptor = FetchDescriptor<ActionGroup>(
-//          predicate: #Predicate<ActionGroup> { group in
-//            (group.family?.persistentModelID == stateManager.familyId) || false
-      ////            groups.actions.contains { action in
-      ////              action.name == "Withdrawl"
-      ////            }
-//          })
-
-//        descriptor.relationshipKeyPathsForPrefetching = [
-//          \.family,
-//        ]
-
-//        groups = try! modelContext
-//          .fetch(descriptor)
-//      }
     }
   }
 }
@@ -137,6 +100,7 @@ extension MintyUI {
   let preview = Preview()
 
   MintyUI.ActionsList(
+    familyId: preview.family.persistentModelID,
     type: .deposit,
   )
   .environment(preview.stateManager)

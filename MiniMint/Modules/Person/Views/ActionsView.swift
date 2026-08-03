@@ -27,11 +27,18 @@ extension PersonView {
 
     var body: some View {
       VStack(alignment: .leading) {
-        MintyUI.ActionsList(type: .deposit)
+        MintyUI.ActionsList(
+          familyId: stateManager.family?.persistentModelID,
+          type: .deposit,
+        )
       }
       .padding(.vertical, 20)
       .padding(.horizontal, 20)
     }
+
+    // MARK: Private
+
+    @Environment(StateManager.self) private var stateManager: StateManager
   }
 
 }
