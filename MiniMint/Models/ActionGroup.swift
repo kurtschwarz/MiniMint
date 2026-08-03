@@ -7,15 +7,18 @@ final class ActionGroup {
 
   // MARK: Lifecycle
 
-  init(name: String, family: Family? = nil) {
+  init(name: String, family: Family? = nil, actions: [Action] = []) {
     self.name = name
     self.family = family
+    self.actions = actions
   }
 
   // MARK: Internal
 
   var name: String
+
   @Relationship(inverse: \Family.actionGroups) var family: Family?
+  @Relationship(deleteRule: .nullify) var actions: [Action] = []
 
   static func generateDefaults() -> [ActionGroup] {
     return [
@@ -24,7 +27,6 @@ final class ActionGroup {
       .init(name: "Cognitive"),
       .init(name: "Social/Emotional"),
       .init(name: "Creative"),
-      .init(name: "Other"),
     ]
   }
 }

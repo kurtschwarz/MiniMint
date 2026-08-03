@@ -41,6 +41,7 @@ extension MintyUI {
 
     init(
       tint: Color = .accentColor,
+      activePage: Binding<String?>,
       @ViewBuilder header: @escaping () -> Header,
       @PageLabelBuilder labels: @escaping () -> [PageLabel],
       @ViewBuilder pages: @escaping () -> Pages,
@@ -55,7 +56,7 @@ extension MintyUI {
       let count = labels().count
       _scrollPositions = .init(initialValue: .init(repeating: .init(), count: count))
       _scrollGeometries = .init(initialValue: .init(repeating: .init(), count: count))
-      _activeTab = State(initialValue: labels().first?.title)
+      _activeTab = activePage
     }
 
     // MARK: Internal
@@ -82,7 +83,11 @@ extension MintyUI {
             HStack(spacing: 0) {
               Group(subviews: pages) { collection in
                 ForEach(labels, id: \.title) { label in
-                  pageView(label: label, size: size, collection: collection)
+                  pageView(
+                    label: label,
+                    size: size,
+                    collection: collection,
+                  )
                 }
               }
             }
@@ -210,11 +215,17 @@ extension MintyUI {
     @ViewBuilder func tabBar() -> some View {
       let progress = max(min(mainScrollGeometry.offsetX / mainScrollGeometry.containerSize.width, CGFloat(labels.count - 1)), 0)
 
-      VStack(alignment: .leading, spacing: 5) {
+      VStack(alignment: .leading, spacing: 4) {
         HStack(spacing: 0) {
           ForEach(labels, id: \.title) { label in
             Group {
               Text(label.title)
+                .font(.system(
+                  size: 16,
+                  weight: activeTab == label.title
+                    ? .medium
+                    : .regular
+                ))
             }
             .frame(maxWidth: .infinity)
             .foregroundStyle(
@@ -282,7 +293,8 @@ extension MintyUI {
 
     // MARK: Private
 
-    @State private var activeTab: String?
+    @Binding private var activeTab: String?
+
     @State private var headerHeight: CGFloat = 0
     @State private var scrollGeometries: [ScrollGeometry]
     @State private var scrollPositions: [ScrollPosition]
@@ -331,6 +343,7 @@ extension ScrollGeometry {
 #Preview {
   MintyUI.ScrollingPageView(
     tint: Color(hex: 0xEEE0FF),
+    activePage: .constant(""),
   ) {
     VStack {
       Text("Header")

@@ -1,0 +1,175 @@
+import SwiftData
+import SwiftUI
+
+struct CreateActionView: View {
+
+  // MARK: Lifecycle
+
+  init(
+    actionGroups: [ActionGroup]? = nil,
+    personId: PersistentIdentifier? = nil,
+    person: Person? = nil,
+  ) {
+    _actionGroups = State(initialValue: actionGroups)
+    _personId = State(initialValue: personId)
+    _person = State(initialValue: person)
+  }
+
+  // MARK: Internal
+
+  var body: some View {
+    NavigationView {
+      Form {
+        Section(header: Text("Details")) {
+          TextField("Action Name", text: $action.name)
+            .keyboardType(.asciiCapable)
+
+          HStack {
+            Text("Deposit Amount")
+
+            TextField(
+              "Deposit Amount",
+              value: $action.amount,
+              format: .number
+                .grouping(.automatic)
+                .precision(.fractionLength(2))
+            )
+            .keyboardType(.numberPad)
+            .multilineTextAlignment(.trailing)
+          }
+        }
+
+        if person != nil {
+          Section(
+            header: Text("Sharing"),
+            footer: Text("Actions are avaliable to all members of your family by default. If you'd like to only show this action for \(person!.name) you can do so with the toggle above.")
+              .font(.caption)
+              .foregroundColor(.gray)
+          ) {
+            Toggle("Only for \(person!.name)", isOn: .constant(false))
+          }
+        }
+
+        Button(
+          action: {
+            saveAction()
+          },
+          label: {
+            Text("Save Changes")
+          },
+        )
+      }
+      .contentMargins(.top, 0)
+      .toolbar {
+        ToolbarItem(placement: .topBarLeading) {
+          Button(
+            action: {
+              dismiss()
+            },
+            label: {
+              Text("Cancel")
+            }
+          )
+          .buttonStyle(.plain)
+        }
+
+        ToolbarItem(placement: .topBarTrailing) {
+          Button(
+            action: {
+              saveAction()
+            },
+            label: {
+              Text("Save")
+            }
+          )
+          .buttonStyle(.plain)
+        }
+
+        ToolbarItem(placement: .principal) {
+          Text("Create Action").font(.headline)
+        }
+      }
+      .listStyle(.plain)
+    }
+    .navigationBarHidden(true)
+    .onAppear(perform: getPerson)
+    .onAppear(perform: getActionGroups)
+  }
+
+  // MARK: Private
+
+  @State private var action = Action(name: "", type: .withdrawl)
+  @State private var actionGroups: [ActionGroup]? = nil
+  @State private var selectedActionGroup: PersistentIdentifier? = nil
+
+  @State private var personId: PersistentIdentifier? = nil
+  @State private var person: Person? = nil
+
+  @Environment(\.dismiss) private var dismiss
+  @Environment(\.modelContext) private var modelContext
+  @Environment(StateManager.self) private var stateManager: StateManager
+
+  private func saveAction() {
+    do {
+      action.family = stateManager.family
+      action.group = actionGroups?.first
+
+      modelContext.insert(action)
+      try modelContext.save()
+    } catch {
+      return
+    }
+
+    dismiss()
+  }
+
+  private func getPerson() {
+    guard let personId = personId else {
+      return
+    }
+
+    if person == nil {
+      person = modelContext.model(for: personId) as? Person
+    }
+  }
+
+  private func getActionGroups() {
+    guard let familyId = stateManager.familyId else {
+      return
+    }
+
+    if actionGroups == nil {
+      var descriptor = FetchDescriptor<ActionGroup>(
+        predicate: #Predicate { group in
+          if let family = group.family {
+            return family.persistentModelID == familyId
+          } else {
+            return false
+          }
+        })
+
+      descriptor.relationshipKeyPathsForPrefetching = [
+        \.family,
+      ]
+
+      actionGroups = try! modelContext
+        .fetch(descriptor)
+    }
+  }
+
+}
+
+#Preview {
+  let preview = Preview()
+
+  NavigationStack { }
+    .sheet(isPresented: .constant(true)) {
+      CreateActionView(
+        actionGroups: ActionGroup.generateDefaults(),
+        person: .init(name: "Oskar", role: .child)
+      )
+      .presentationDetents([.medium, .large], selection: .constant(.large))
+    }
+    .environment(preview.stateManager)
+    .modelContainer(preview.modelContainer)
+}

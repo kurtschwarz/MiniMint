@@ -13,6 +13,9 @@ enum Route: Identifiable, Hashable {
   case person(PersistentIdentifier)
   case selectAvatar(PersistentIdentifier)
 
+  case createAction(PersistentIdentifier)
+  case createReward
+
   // MARK: Internal
 
   var id: Self { return self }

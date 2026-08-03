@@ -14,27 +14,8 @@ extension EnvironmentValues {
   // MARK: Lifecycle
 
   init() {
-    let schema = Schema([
-      Avatar.self,
-      Family.self,
-      Currency.self,
-      Person.self,
-      Action.self,
-      ActionGroup.self,
-      Ledger.self,
-      LedgerEntry.self,
-    ])
-
-    do {
-      let modelConfig = ModelConfiguration(isStoredInMemoryOnly: false)
-
-      modelContainer = try ModelContainer(for: schema, configurations: modelConfig)
-
-      stateManager = StateManager(modelContext: modelContainer.mainContext)
-      stateManager.restore()
-    } catch let error {
-      fatalError("cannot set up modelContainer: \(error)")
-    }
+    stateManager = StateManager(modelContext: SwiftDataManager.shared.container.mainContext)
+    stateManager.restore()
   }
 
   // MARK: Internal
@@ -50,7 +31,7 @@ extension EnvironmentValues {
         }
         .sheet(item: self.$stateManager.sheet) { route in
           view(route: route)
-            .presentationDetents([.large], selection: self.$stateManager.sheetPresentationDetent)
+            .presentationDetents([.medium, .large], selection: self.$stateManager.sheetPresentationDetent)
             .presentationDragIndicator(.automatic)
         }
       }
@@ -60,7 +41,7 @@ extension EnvironmentValues {
       .environment(stateManager)
       .preferredColorScheme(.light)
     }
-    .modelContainer(modelContainer)
+    .modelContainer(SwiftDataManager.shared.container)
   }
 
   @ViewBuilder func initialView() -> some View {
@@ -87,12 +68,16 @@ extension EnvironmentValues {
 
     case .selectAvatar(let avatarId):
       SelectAvatarView(avatarId: avatarId)
+
+    case .createAction(let personId):
+      CreateActionView(personId: personId)
+
+    case .createReward:
+      CreateRewardView()
     }
   }
 
   // MARK: Private
 
   @State private var stateManager: StateManager
-
-  private let modelContainer: ModelContainer
 }

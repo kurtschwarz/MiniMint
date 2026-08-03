@@ -69,7 +69,7 @@ struct SelectAvatarView: View {
           }
           .buttonStyle(PlainButtonStyle())
           .frame(width: 64, height: 64)
-          .background(Color("light_gray"))
+          .background(.lightGray)
           .cornerRadius(32)
 
           ForEach(emojiAvatars) { emojiAvatar in

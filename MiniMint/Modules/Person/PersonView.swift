@@ -11,13 +11,20 @@ struct PersonView: View {
   ) {
     self.personId = personId
     self.person = person
+
+    _activePage = State(initialValue: "Activity")
   }
 
   // MARK: Internal
 
   @State var person: Person? = nil
+  @State var activePage: String? = nil
 
   var personId: PersistentIdentifier? = nil
+
+  var activityView = PersonView.ActivityView()
+  var actionsView = PersonView.ActionsView()
+  var rewardsView = PersonView.RewardsView()
 
   var body: some View {
     MintyUI.ScrollingPageView(
@@ -25,6 +32,7 @@ struct PersonView: View {
         ? Color(hex: person!.avatar!.background!)
         : .accentColor
       ),
+      activePage: $activePage,
     ) {
       VStack(alignment: .center) {
         if person?.avatar != nil {
@@ -35,28 +43,29 @@ struct PersonView: View {
           .onTapGesture {
             navigate(
               .sheet(
-                .selectAvatar(person!.avatar!.persistentModelID)
+                .selectAvatar(person!.avatar!.persistentModelID),
+                .large
               )
             )
           }
         }
 
         Text("\(person?.name ?? "Unknown")")
-          .font(.system(size: 24, weight: .bold))
+          .font(.system(size: 22, weight: .bold))
           .padding(.top, 10)
       }
       .frame(maxWidth: .infinity, alignment: .center)
-      .padding(.top, 10)
-      .padding(.bottom, 30)
+      .padding(.top, 5)
+      .padding(.bottom, 20)
       .padding(.horizontal, 10)
     } labels: {
-      MintyUI.PageLabel(title: "Activity")
-      MintyUI.PageLabel(title: "Actions")
-      MintyUI.PageLabel(title: "Rewards")
+      activityView.pageLabel()
+      actionsView.pageLabel()
+      rewardsView.pageLabel()
     } pages: {
-      Text("Activity View")
-      Text("Actions View")
-      Text("Rewards View")
+      activityView
+      actionsView
+      rewardsView
     }
     .toolbar {
       ToolbarItem(placement: .topBarLeading) {
@@ -86,6 +95,18 @@ struct PersonView: View {
           .adjust(saturation: 0.30, brightness: -0.35)
       }
     }
+    .safeAreaInset(edge: .bottom, content: {
+      if activePage == "Activity" {
+        activityView.stickyBottomView(navigate: navigate)
+      } else if activePage == "Actions" {
+        actionsView.stickyBottomView(
+          personId: personId!,
+          navigate: navigate,
+        )
+      } else if activePage == "Rewards" {
+        rewardsView.stickyBottomView(navigate: navigate)
+      }
+    })
   }
 
   func loadPerson() {
@@ -111,5 +132,6 @@ struct PersonView: View {
       personId: preview.family.people.first?.persistentModelID,
     )
   }
+  .environment(preview.stateManager)
   .modelContainer(preview.modelContainer)
 }

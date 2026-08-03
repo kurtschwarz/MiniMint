@@ -90,6 +90,7 @@ extension SetupCoordinator {
     try? modelContext.transaction {
       family.people = people
       family.currency = currency
+      family.actionGroups = ActionGroup.generateDefaults()
 
       modelContext.insert(family)
 
