@@ -7,7 +7,7 @@ struct EditAvatarView: View {
   @FocusState var focused: Bool?
 
   var body: some View {
-    NavigationView {
+    NavigationStack {
       VStack {
         VStack {
           TextField("", text: $emoji)
@@ -71,7 +71,7 @@ struct EditAvatarView: View {
       .padding(.vertical, 40)
       .padding(.horizontal, 20)
       .toolbar {
-        ToolbarItem(placement: .topBarLeading) {
+        ToolbarItem(placement: .cancellationAction) {
           Button(
             action: {
               modelContext.rollback()
@@ -79,13 +79,13 @@ struct EditAvatarView: View {
               dismiss()
             },
             label: {
-              Text("Cancel")
+              Image(systemName: "xmark")
             }
           )
-          .buttonStyle(.plain)
+          .accessibilityLabel("Cancel")
         }
 
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .confirmationAction) {
           Button(
             action: {
               modelContext.insert(avatar)
@@ -94,10 +94,10 @@ struct EditAvatarView: View {
               dismiss()
             },
             label: {
-              Text("Done")
+              Image(systemName: "checkmark")
             }
           )
-          .buttonStyle(.plain)
+          .accessibilityLabel("Done")
         }
       }
     }

@@ -35,7 +35,7 @@ struct SelectAvatarView: View {
   var avatarId: PersistentIdentifier? = nil
 
   var body: some View {
-    NavigationView {
+    NavigationStack {
       VStack {
         VStack {
           MintyUI.CircleAvatar(
@@ -91,28 +91,28 @@ struct SelectAvatarView: View {
       .padding(.vertical, 40)
       .padding(.horizontal, 20)
       .toolbar {
-        ToolbarItem(placement: .topBarLeading) {
+        ToolbarItem(placement: .cancellationAction) {
           Button(
             action: {
               dismiss()
             },
             label: {
-              Text("Cancel")
+              Image(systemName: "xmark")
             }
           )
-          .buttonStyle(.plain)
+          .accessibilityLabel("Cancel")
         }
 
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .confirmationAction) {
           Button(
             action: {
               dismiss()
             },
             label: {
-              Text("Done")
+              Image(systemName: "checkmark")
             }
           )
-          .buttonStyle(.plain)
+          .accessibilityLabel("Done")
         }
       }
       .sheet(isPresented: $showEditorView) {

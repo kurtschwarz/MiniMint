@@ -12,7 +12,7 @@ struct CreatePersonView: View {
   // MARK: Internal
 
   var body: some View {
-    NavigationView {
+    NavigationStack {
       Form {
         Section(header: Text("Details")) {
           TextField("Name", text: $person.name)
@@ -26,32 +26,28 @@ struct CreatePersonView: View {
         )
         .disabled(!canSave)
       }
-      .contentMargins(.top, 0)
+      .listStyle(.plain)
+      .navigationTitle(person.role == .child ? "Add Little" : "Add Adult")
+      .navigationBarTitleDisplayMode(.inline)
       .toolbar {
-        ToolbarItem(placement: .topBarLeading) {
+        ToolbarItem(placement: .cancellationAction) {
           Button(
             action: { dismiss() },
-            label: { Text("Cancel") },
+            label: { Image(systemName: "xmark") },
           )
-          .buttonStyle(.plain)
+          .accessibilityLabel("Cancel")
         }
 
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .confirmationAction) {
           Button(
             action: { savePerson() },
-            label: { Text("Save") },
+            label: { Image(systemName: "checkmark") },
           )
-          .buttonStyle(.plain)
           .disabled(!canSave)
-        }
-
-        ToolbarItem(placement: .principal) {
-          Text(person.role == .child ? "Add Little" : "Add Adult").font(.headline)
+          .accessibilityLabel("Save")
         }
       }
-      .listStyle(.plain)
     }
-    .navigationBarHidden(true)
   }
 
   // MARK: Private

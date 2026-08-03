@@ -74,17 +74,10 @@ struct PersonView: View {
             dismiss()
           },
         ) {
-          HStack {
-            Image(systemName: "chevron.left")
-              .scaleEffect(0.60)
-              .font(Font.title.weight(.semibold))
-
-            Text("Back")
-              .offset(x: -12)
-          }
+          Image(systemName: "chevron.left")
         }
-        .offset(x: -7)
         .tint(toolbarTintColor)
+        .accessibilityLabel("Back")
       }
     }
     .navigationBarBackButtonHidden(true)

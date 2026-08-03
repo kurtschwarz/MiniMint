@@ -18,7 +18,7 @@ struct CreateActionView: View {
   // MARK: Internal
 
   var body: some View {
-    NavigationView {
+    NavigationStack {
       Form {
         Section(header: Text("Details")) {
           TextField("Action Name", text: $action.name)
@@ -65,39 +65,35 @@ struct CreateActionView: View {
           },
         )
       }
-      .contentMargins(.top, 0)
+      .navigationTitle("Create Action")
+      .navigationBarTitleDisplayMode(.inline)
       .toolbar {
-        ToolbarItem(placement: .topBarLeading) {
+        ToolbarItem(placement: .cancellationAction) {
           Button(
             action: {
               dismiss()
             },
             label: {
-              Text("Cancel")
+              Image(systemName: "xmark")
             }
           )
-          .buttonStyle(.plain)
+          .accessibilityLabel("Cancel")
         }
 
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .confirmationAction) {
           Button(
             action: {
               saveAction()
             },
             label: {
-              Text("Save")
+              Image(systemName: "checkmark")
             }
           )
-          .buttonStyle(.plain)
-        }
-
-        ToolbarItem(placement: .principal) {
-          Text("Create Action").font(.headline)
+          .accessibilityLabel("Save")
         }
       }
       .listStyle(.plain)
     }
-    .navigationBarHidden(true)
     .onAppear(perform: getPerson)
     .onAppear(perform: getActionGroups)
   }
