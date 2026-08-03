@@ -9,7 +9,7 @@ struct HomeView: View {
     VStack {
       HStack(alignment: .center, spacing: 16) {
         MintyUI.AvatarGroup(
-          people: (stateManager.family?.people ?? []).filter { person in person.role == .child },
+          people: littles,
         )
 
         VStack(alignment: .leading, spacing: 0) {
@@ -30,6 +30,13 @@ struct HomeView: View {
           Text("Your Crew")
             .font(.system(size: 16, weight: .bold))
           Spacer()
+          if isEditingCrew {
+            Button("Done") {
+              withAnimation { isEditingCrew = false }
+            }
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundStyle(Color("primary_green"))
+          }
         },
       ) {
         Section(
@@ -40,8 +47,9 @@ struct HomeView: View {
           }.padding(.top, 2),
         ) {
           MintyUI.PeopleList(
-            people: (stateManager.family?.people ?? []).filter { person in person.role == .child },
+            people: littles,
             showAddPersonButton: true,
+            isEditing: $isEditingCrew,
           )
           .padding(.bottom, 18)
         }
@@ -54,9 +62,10 @@ struct HomeView: View {
           },
         ) {
           MintyUI.PeopleList(
-            people: (stateManager.family?.people ?? []).filter { person in person.role == .parent },
+            people: adults,
             showAddPersonButton: true,
             showBalance: false,
+            isEditing: $isEditingCrew,
           )
         }
       }
@@ -108,6 +117,22 @@ struct HomeView: View {
 
   @Environment(\.modelContext) private var modelContext
   @Environment(StateManager.self) private var stateManager: StateManager
+
+  @State private var isEditingCrew = false
+
+  private var littles: [Person] {
+    people(role: .child)
+  }
+
+  private var adults: [Person] {
+    people(role: .parent)
+  }
+
+  private func people(role: Role) -> [Person] {
+    (stateManager.family?.people ?? [])
+      .filter { $0.role == role }
+      .sorted { ($0.sortOrder, $0.name) < ($1.sortOrder, $1.name) }
+  }
 }
 
 #Preview {
