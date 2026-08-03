@@ -7,6 +7,24 @@ struct HomeView: View {
 
   var body: some View {
     VStack {
+      HStack(alignment: .center, spacing: 16) {
+        MintyUI.AvatarGroup(
+          people: (stateManager.family?.people ?? []).filter { person in person.role == .child },
+        )
+
+        VStack(alignment: .leading, spacing: 0) {
+          Text("the")
+            .font(.system(size: 14, weight: .medium))
+          Text(stateManager.family?.name ?? "")
+            .font(.system(size: 28, weight: .bold, design: .serif))
+          Text("family")
+            .font(.system(size: 14, weight: .medium))
+        }
+        .multilineTextAlignment(.leading)
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.bottom, 24)
+
       Section(
         header: HStack {
           Text("Your Crew")
