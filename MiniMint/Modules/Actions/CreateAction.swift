@@ -30,12 +30,18 @@ struct CreateActionView: View {
             TextField(
               "Deposit Amount",
               value: $action.amount,
-              format: .number
-                .grouping(.automatic)
-                .precision(.fractionLength(2))
+              format: .number.grouping(.automatic)
             )
             .keyboardType(.numberPad)
             .multilineTextAlignment(.trailing)
+          }
+        }
+
+        Section(header: Text("Group")) {
+          Picker("Group", selection: $selectedActionGroup) {
+            ForEach(actionGroups ?? []) { group in
+              Text(group.name).tag(Optional(group.persistentModelID))
+            }
           }
         }
 
@@ -46,7 +52,7 @@ struct CreateActionView: View {
               .font(.caption)
               .foregroundColor(.gray)
           ) {
-            Toggle("Only for \(person!.name)", isOn: .constant(false))
+            Toggle("Only for \(person!.name)", isOn: $onlyForThisPerson)
           }
         }
 
@@ -98,9 +104,10 @@ struct CreateActionView: View {
 
   // MARK: Private
 
-  @State private var action = Action(name: "", type: .withdrawl)
+  @State private var action = Action(name: "", type: .deposit)
   @State private var actionGroups: [ActionGroup]? = nil
   @State private var selectedActionGroup: PersistentIdentifier? = nil
+  @State private var onlyForThisPerson = false
 
   @State private var personId: PersistentIdentifier? = nil
   @State private var person: Person? = nil
@@ -112,7 +119,9 @@ struct CreateActionView: View {
   private func saveAction() {
     do {
       action.family = stateManager.family
-      action.group = actionGroups?.first
+      action.group = (actionGroups ?? []).first {
+        $0.persistentModelID == selectedActionGroup
+      } ?? actionGroups?.first
 
       modelContext.insert(action)
       try modelContext.save()
@@ -154,6 +163,10 @@ struct CreateActionView: View {
 
       actionGroups = try! modelContext
         .fetch(descriptor)
+    }
+
+    if selectedActionGroup == nil {
+      selectedActionGroup = actionGroups?.first?.persistentModelID
     }
   }
 
