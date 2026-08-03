@@ -74,8 +74,7 @@ struct EditAvatarView: View {
         ToolbarItem(placement: .topBarLeading) {
           Button(
             action: {
-              modelContext.insert(avatar)
-              try? modelContext.save()
+              modelContext.rollback()
 
               dismiss()
             },
@@ -89,6 +88,9 @@ struct EditAvatarView: View {
         ToolbarItem(placement: .topBarTrailing) {
           Button(
             action: {
+              modelContext.insert(avatar)
+              try? modelContext.save()
+
               dismiss()
             },
             label: {
