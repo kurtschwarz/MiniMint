@@ -134,9 +134,21 @@ protocol StateManagerProtocol: AnyObject, Observable {
   }
 
   func restore() {
-    if familyId != nil {
-      family = modelContext.model(for: familyId!) as? Family
+    guard let familyId else {
+      return
+    }
+
+    let descriptor = FetchDescriptor<Family>(
+      predicate: #Predicate { $0.persistentModelID == familyId }
+    )
+
+    if let existingFamily = try? modelContext.fetch(descriptor).first {
+      family = existingFamily
       hasCompletedSetup = true
+    } else {
+      self.familyId = nil
+      family = nil
+      hasCompletedSetup = false
     }
   }
 
