@@ -9,35 +9,62 @@ struct HomeView: View {
 
   var body: some View {
     ScrollView {
-      VStack {
-        HStack(alignment: .center, spacing: 16) {
-          MintyUI.AvatarGroup(
-            people: littles,
-          )
+      VStack(spacing: 0) {
+        // Heading + summary sit on a grey backdrop that runs up under the status bar.
+        VStack(spacing: 0) {
+          HStack(alignment: .center, spacing: 16) {
+            MintyUI.AvatarGroup(
+              people: littles,
+            )
 
-          VStack(alignment: .leading, spacing: 0) {
-            Text("the")
-              .font(.system(size: 14, weight: .medium))
-            Text(stateManager.family?.name ?? "")
-              .font(.system(size: 28, weight: .bold, design: .serif))
-            Text("family")
-              .font(.system(size: 14, weight: .medium))
+            VStack(alignment: .leading, spacing: 0) {
+              Text("the")
+                .font(.system(size: 14, weight: .medium))
+              Text(stateManager.family?.name ?? "")
+                .font(.system(size: 28, weight: .bold, design: .serif))
+              Text("family")
+                .font(.system(size: 14, weight: .medium))
+            }
+            .multilineTextAlignment(.leading)
           }
-          .multilineTextAlignment(.leading)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .padding(.bottom, 20)
+
+          childCardsCarousel
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 20)
+        .padding(.top, 20)
+        .padding(.bottom, 24)
+        // The sheet below overlaps up by the corner radius; add it back so the visible
+        // grey gap under the cards stays a full 24 rather than being eaten by the overlap.
+        .padding(.bottom, MintyUI.Radius.standard)
+        .frame(maxWidth: .infinity)
+        // Let the wash bleed up into the status-bar area so the top blends seamlessly.
+        .background(heroBackground, ignoresSafeAreaEdges: .top)
+
+        // The rest of the content rides on a white sheet with rounded top corners.
+        VStack(spacing: 0) {
+          summaryCard
+
+          recentActivitySection
+            .padding(.top, 32)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 24)
         .padding(.bottom, 20)
-
-        summaryCard
-          .padding(.bottom, 24)
-
-        childCardsCarousel
-
-        recentActivitySection
-          .padding(.top, 32)
+        // Restore the height the upward pull below borrows back from the layout.
+        .padding(.bottom, MintyUI.Radius.standard)
+        .frame(maxWidth: .infinity)
+        .background(
+          UnevenRoundedRectangle(
+            topLeadingRadius: MintyUI.Radius.standard,
+            topTrailingRadius: MintyUI.Radius.standard,
+          )
+          .fill(Color.white),
+        )
+        // Pull the sheet up so its rounded corners overlap the grey hero and read against it.
+        .padding(.top, -MintyUI.Radius.standard)
       }
-      .padding(.horizontal, 20)
-      .padding(.vertical, 20)
     }
     .toolbar(content: {
 //      ToolbarItem(placement: .topBarTrailing) {
@@ -61,6 +88,7 @@ struct HomeView: View {
 //      }
     })
     .scrollIndicators(.hidden)
+    // White base so everything below the sheet — including the bottom safe area — reads white.
     .background(Color.white, ignoresSafeAreaEdges: .all)
     .navigationBarBackButtonHidden(true)
   }
@@ -75,6 +103,16 @@ struct HomeView: View {
   /// trailing scroll margin that lets the first and last cards rest centered too.
   private let cardSpacing: CGFloat = 12
   private let cardPeek: CGFloat = 10
+
+  /// A very subtle wash behind the heading: white at the top so it melts into the
+  /// status-bar area, easing down into grey above the white sheet below.
+  private var heroBackground: LinearGradient {
+    LinearGradient(
+      colors: [Color.white, Color("light_gray")],
+      startPoint: .top,
+      endPoint: .bottom,
+    )
+  }
 
   private var littles: [Person] {
     people(role: .child)
@@ -123,7 +161,7 @@ struct HomeView: View {
     .padding(16)
     .frame(maxWidth: .infinity)
     .background(Color("light_gray"))
-    .cornerRadius(20)
+    .cornerRadius(MintyUI.Radius.standard)
   }
 
   /// A swipeable, peeking row of one card per Little, trailed by an add card.
@@ -136,7 +174,7 @@ struct HomeView: View {
         ForEach(littles) { person in
           MintyUI.ChildCard(person: person, currencyName: currencyName)
             .containerRelativeFrame(.horizontal, count: 20, span: 19, spacing: cardSpacing)
-            .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: MintyUI.Radius.standard, style: .continuous))
             .onTapGesture { navigate(.push(.person(person.persistentModelID))) }
         }
 
@@ -166,9 +204,9 @@ struct HomeView: View {
       .foregroundStyle(Color("dark_grey"))
       .frame(maxWidth: .infinity, maxHeight: .infinity)
       .background(
-        RoundedRectangle(cornerRadius: 24, style: .continuous)
+        RoundedRectangle(cornerRadius: MintyUI.Radius.standard, style: .continuous)
           .strokeBorder(Color("dark_grey").opacity(0.18), style: StrokeStyle(lineWidth: 2, dash: [8, 6]))
-          .background(Color("light_gray").opacity(0.5), in: RoundedRectangle(cornerRadius: 24, style: .continuous)),
+          .background(Color("light_gray").opacity(0.5), in: RoundedRectangle(cornerRadius: MintyUI.Radius.standard, style: .continuous)),
       )
     }
     .buttonStyle(.plain)

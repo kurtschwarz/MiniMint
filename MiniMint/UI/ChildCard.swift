@@ -19,7 +19,7 @@ extension MintyUI {
 
     var body: some View {
       ZStack {
-        RoundedRectangle(cornerRadius: 14, style: .continuous)
+        RoundedRectangle(cornerRadius: MintyUI.Radius.standard, style: .continuous)
           .fill(
             LinearGradient(
               colors: [baseColor, baseColor.adjust(saturation: 0.12, brightness: -0.18, opacity: 0)],

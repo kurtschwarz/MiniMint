@@ -95,7 +95,7 @@ extension MintyUI {
                 .padding(.vertical, 12)
                 .frame(maxWidth: .infinity)
                 .background(.lightGray)
-                .cornerRadius(12)
+                .cornerRadius(MintyUI.Radius.standard)
               }
               .buttonStyle(.plain)
             }

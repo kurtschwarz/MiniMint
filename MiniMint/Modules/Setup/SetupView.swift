@@ -45,7 +45,7 @@ struct SetupView: View {
         .padding(.horizontal, 20)
         .background(
           UnevenRoundedRectangle(
-            cornerRadii: .init(topLeading: 40, topTrailing: 40),
+            cornerRadii: .init(topLeading: MintyUI.Radius.standard, topTrailing: MintyUI.Radius.standard),
           )
           .fill(Color.white)
           .edgesIgnoringSafeArea(.bottom)
