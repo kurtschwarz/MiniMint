@@ -19,8 +19,9 @@ final class Family {
     self.avatar = avatar
     self.currency = currency
     self.people = people
-    self.actionGroups = actionGroups.isEmpty ? ActionGroup.generateDefaults() : actionGroups
-    self.actions = actions
+    let resolvedGroups = actionGroups.isEmpty ? ActionGroup.generateDefaults() : actionGroups
+    self.actionGroups = resolvedGroups
+    self.actions = actions.isEmpty ? resolvedGroups.flatMap(\.actions) : actions
   }
 
   // MARK: Internal
