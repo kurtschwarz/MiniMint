@@ -39,6 +39,7 @@ struct SetupView: View {
           .tint(Color("primary_green"))
           .buttonStyle(.borderedProminent)
           .controlSize(.large)
+          .disabled(!setupCoordinator.canAdvance)
         }
         .padding(.vertical, 20)
         .padding(.horizontal, 20)

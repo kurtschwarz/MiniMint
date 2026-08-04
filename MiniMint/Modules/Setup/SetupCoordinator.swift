@@ -22,6 +22,18 @@ import SwiftUI
     .init(name: "", role: .child, avatar: Avatar.generate()),
   ]
 
+  /// Whether the current step is complete enough to move on.
+  var canAdvance: Bool {
+    switch currentStep {
+    case .addChildren:
+      return people.allSatisfy {
+        !$0.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+      }
+    default:
+      return true
+    }
+  }
+
   @ObservationIgnored() var stateManager: StateManager? = nil
   @ObservationIgnored() var modelContext: ModelContext? = nil
 }
@@ -88,6 +100,10 @@ extension SetupCoordinator {
     }
 
     try? modelContext.transaction {
+      for person in people {
+        person.name = person.name.trimmingCharacters(in: .whitespacesAndNewlines)
+      }
+
       family.people = people
       family.currency = currency
       let actionGroups = ActionGroup.generateDefaults()
