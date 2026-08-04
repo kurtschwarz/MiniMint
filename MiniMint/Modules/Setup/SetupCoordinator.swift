@@ -100,8 +100,9 @@ extension SetupCoordinator {
     }
 
     try? modelContext.transaction {
-      for person in people {
+      for (index, person) in people.enumerated() {
         person.name = person.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        person.sortOrder = index
       }
 
       family.people = people
