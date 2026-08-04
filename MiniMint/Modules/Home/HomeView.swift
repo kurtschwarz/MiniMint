@@ -8,89 +8,109 @@ struct HomeView: View {
   // MARK: Internal
 
   var body: some View {
-    ScrollView {
-      VStack(spacing: 0) {
-        // Heading + summary sit on a grey backdrop that runs up under the status bar.
+    GeometryReader { proxy in
+      ScrollView {
         VStack(spacing: 0) {
-          HStack(alignment: .center, spacing: 16) {
-            MintyUI.AvatarGroup(
-              people: littles,
-            )
+          // Heading + summary sit on the hero wash that runs up under the status bar.
+          VStack(spacing: 0) {
+            HStack(alignment: .center, spacing: 16) {
+              MintyUI.AvatarGroup(
+                people: littles,
+              )
 
-            VStack(alignment: .leading, spacing: 0) {
-              Text("the")
-                .font(.system(size: 14, weight: .medium))
-              Text(stateManager.family?.name ?? "")
-                .font(.system(size: 28, weight: .bold, design: .serif))
-              Text("family")
-                .font(.system(size: 14, weight: .medium))
+              VStack(alignment: .leading, spacing: 0) {
+                Text("the")
+                  .font(.system(size: 14, weight: .medium))
+                Text(stateManager.family?.name ?? "")
+                  .font(.system(size: 28, weight: .bold, design: .serif))
+                Text("family")
+                  .font(.system(size: 14, weight: .medium))
+              }
+              .multilineTextAlignment(.leading)
             }
-            .multilineTextAlignment(.leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.bottom, 20)
+
+            childCardsCarousel
           }
-          .frame(maxWidth: .infinity, alignment: .leading)
+          .padding(.horizontal, 20)
+          .padding(.top, 20)
+          .padding(.bottom, 24)
+          // The sheet below overlaps up by the corner radius; add it back so the visible
+          // grey gap under the cards stays a full 24 rather than being eaten by the overlap.
+          .padding(.bottom, MintyUI.Radius.standard)
+          // The ScrollView ignores the top safe area so the wash can fill it, so push
+          // the header back down past the status bar by that inset ourselves.
+          .padding(.top, proxy.safeAreaInsets.top)
+          .frame(maxWidth: .infinity)
+          // Wash fills the whole hero, status-bar area included — no white strip on top.
+          .background(heroBackground)
+
+          // The rest of the content rides on a white sheet with rounded top corners.
+          VStack(spacing: 0) {
+            summaryCard
+
+            recentActivitySection
+              .padding(.top, 32)
+          }
+          .padding(.horizontal, 20)
+          .padding(.top, 24)
           .padding(.bottom, 20)
-
-          childCardsCarousel
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 20)
-        .padding(.bottom, 24)
-        // The sheet below overlaps up by the corner radius; add it back so the visible
-        // grey gap under the cards stays a full 24 rather than being eaten by the overlap.
-        .padding(.bottom, MintyUI.Radius.standard)
-        .frame(maxWidth: .infinity)
-        // Let the wash bleed up into the status-bar area so the top blends seamlessly.
-        .background(heroBackground, ignoresSafeAreaEdges: .top)
-
-        // The rest of the content rides on a white sheet with rounded top corners.
-        VStack(spacing: 0) {
-          summaryCard
-
-          recentActivitySection
-            .padding(.top, 32)
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 24)
-        .padding(.bottom, 20)
-        // Restore the height the upward pull below borrows back from the layout.
-        .padding(.bottom, MintyUI.Radius.standard)
-        .frame(maxWidth: .infinity)
-        .background(
-          UnevenRoundedRectangle(
-            topLeadingRadius: MintyUI.Radius.standard,
-            topTrailingRadius: MintyUI.Radius.standard,
+          // Restore the height the upward pull below borrows back from the layout.
+          .padding(.bottom, MintyUI.Radius.standard)
+          .frame(maxWidth: .infinity)
+          .background(
+            UnevenRoundedRectangle(
+              topLeadingRadius: MintyUI.Radius.standard,
+              topTrailingRadius: MintyUI.Radius.standard,
+            )
+            .fill(Color.white),
           )
-          .fill(Color.white),
-        )
-        // Pull the sheet up so its rounded corners overlap the grey hero and read against it.
-        .padding(.top, -MintyUI.Radius.standard)
+          // Pull the sheet up so its rounded corners overlap the grey hero and read against it.
+          .padding(.top, -MintyUI.Radius.standard)
+        }
       }
-    }
-    .toolbar(content: {
-//      ToolbarItem(placement: .topBarTrailing) {
-//        Button(
-//          action: { },
-//          label: {
-//            Image(systemName: "bell.badge")
-//              .foregroundStyle(.red, Color("primary_green"))
-//          },
-//        )
-//      }
+      // Let the scroll content — and the hero wash on it — extend up under the status bar.
+      .ignoresSafeArea(edges: .top)
+      .toolbar(content: {
+//        ToolbarItem(placement: .topBarTrailing) {
+//          Button(
+//            action: { },
+//            label: {
+//              Image(systemName: "bell.badge")
+//                .foregroundStyle(.red, Color("primary_green"))
+//            },
+//          )
+//        }
 //
-//      ToolbarItem(placement: .topBarTrailing) {
-//        Button(
-//          action: { },
-//          label: {
-//            Image(systemName: "person")
-//              .foregroundStyle(Color("primary_green"))
-//          },
-//        )
-//      }
-    })
-    .scrollIndicators(.hidden)
-    // White base so everything below the sheet — including the bottom safe area — reads white.
-    .background(Color.white, ignoresSafeAreaEdges: .all)
-    .navigationBarBackButtonHidden(true)
+//        ToolbarItem(placement: .topBarTrailing) {
+//          Button(
+//            action: { },
+//            label: {
+//              Image(systemName: "person")
+//                .foregroundStyle(Color("primary_green"))
+//            },
+//          )
+//        }
+      })
+      .scrollIndicators(.hidden)
+      // Drop the navigation bar's translucent material so nothing paints over the wash.
+      .toolbarBackground(.hidden, for: .navigationBar)
+      // Two-tone base behind the scroll view: the wash on top, white below. During a
+      // rubber-band bounce the exposed overscroll region matches its content — the hero
+      // wash at the top, white under the sheet — instead of flashing white up top. The
+      // seam between the two sits mid-screen, always covered by opaque content.
+      .background {
+        VStack(spacing: 0) {
+          heroBackground
+          Color.white
+        }
+        .ignoresSafeArea()
+      }
+      // Crossfade the wash as the centered card changes, rather than snapping.
+      .animation(.easeInOut(duration: 0.35), value: selectedCard)
+      .navigationBarBackButtonHidden(true)
+    }
   }
 
   // MARK: Private
@@ -104,14 +124,28 @@ struct HomeView: View {
   private let cardSpacing: CGFloat = 12
   private let cardPeek: CGFloat = 10
 
-  /// A very subtle wash behind the heading: white at the top so it melts into the
-  /// status-bar area, easing down into grey above the white sheet below.
-  private var heroBackground: LinearGradient {
-    LinearGradient(
-      colors: [Color.white, Color("light_gray")],
-      startPoint: .top,
-      endPoint: .bottom,
-    )
+  /// Which carousel card is currently centered; drives the hero wash. `nil` before
+  /// the first scroll, which reads as the first card resting under the viewport.
+  @State private var selectedCard: CardID?
+
+  /// The avatar the hero wash should tint toward: the centered Little's, or `nil`
+  /// on the add card (no specific child). Before any scroll, the first Little's.
+  private var activeAvatar: Avatar? {
+    switch selectedCard {
+    case .person(let id): littles.first { $0.persistentModelID == id }?.avatar
+    case .add: nil
+    case .none: littles.first?.avatar
+    }
+  }
+
+  /// A very subtle wash behind the heading, tinted toward the centered card's
+  /// avatar so the hero tracks the carousel. Falls back to a blend across the
+  /// family (add card / no selection) and to neutral grey when there's no colour.
+  private var heroBackground: Color {
+    if let activeAvatar {
+      return Color.groupWash(for: [activeAvatar])
+    }
+    return Color.groupWash(for: littles.compactMap(\.avatar))
   }
 
   private var littles: [Person] {
@@ -176,15 +210,19 @@ struct HomeView: View {
             .containerRelativeFrame(.horizontal, count: 20, span: 19, spacing: cardSpacing)
             .contentShape(RoundedRectangle(cornerRadius: MintyUI.Radius.standard, style: .continuous))
             .onTapGesture { navigate(.push(.person(person.persistentModelID))) }
+            .id(CardID.person(person.persistentModelID))
         }
 
         addChildCard
           .containerRelativeFrame(.horizontal, count: 20, span: 19, spacing: cardSpacing)
+          .id(CardID.add)
       }
       .scrollTargetLayout()
     }
     .scrollTargetBehavior(.viewAligned)
     .scrollIndicators(.hidden)
+    // Track whichever card is centered so the hero wash can follow it.
+    .scrollPosition(id: $selectedCard)
     // Symmetric margins equal to the side peek let every card — including the
     // first and last — rest centered, so the row opens on the first card and
     // each one settles evenly instead of drifting toward the middle.
@@ -206,7 +244,7 @@ struct HomeView: View {
       .background(
         RoundedRectangle(cornerRadius: MintyUI.Radius.standard, style: .continuous)
           .strokeBorder(Color("dark_grey").opacity(0.18), style: StrokeStyle(lineWidth: 2, dash: [8, 6]))
-          .background(Color("light_gray").opacity(0.5), in: RoundedRectangle(cornerRadius: MintyUI.Radius.standard, style: .continuous)),
+          .background(Color.white.opacity(0.5), in: RoundedRectangle(cornerRadius: MintyUI.Radius.standard, style: .continuous)),
       )
     }
     .buttonStyle(.plain)
@@ -255,6 +293,15 @@ struct HomeView: View {
       .filter { $0.role == role }
       .sorted { ($0.sortOrder, $0.name) < ($1.sortOrder, $1.name) }
   }
+}
+
+// MARK: - CardID
+
+/// Identity for each carousel card, so the hero wash can follow whichever one is
+/// centered — a Little's card, or the trailing add card.
+private enum CardID: Hashable {
+  case person(PersistentIdentifier)
+  case add
 }
 
 // MARK: - ActivityItem
