@@ -43,6 +43,12 @@ struct CreateActionView: View {
               Text(group.name).tag(Optional(group.persistentModelID))
             }
           }
+
+          Button {
+            isAddingGroup = true
+          } label: {
+            Label("New Group", systemImage: "plus")
+          }
         }
 
         if person != nil {
@@ -93,6 +99,20 @@ struct CreateActionView: View {
         }
       }
       .listStyle(.plain)
+      .alert("New Group", isPresented: $isAddingGroup) {
+        TextField("Group Name", text: $newGroupName)
+          .keyboardType(.asciiCapable)
+
+        Button("Cancel", role: .cancel) {
+          newGroupName = ""
+        }
+
+        Button("Create") {
+          createGroup()
+        }
+      } message: {
+        Text("Name a new group to organize your actions.")
+      }
     }
     .onAppear(perform: getPerson)
     .onAppear(perform: getActionGroups)
@@ -104,6 +124,9 @@ struct CreateActionView: View {
   @State private var actionGroups: [ActionGroup]? = nil
   @State private var selectedActionGroup: PersistentIdentifier? = nil
   @State private var onlyForThisPerson = false
+
+  @State private var isAddingGroup = false
+  @State private var newGroupName = ""
 
   @State private var personId: PersistentIdentifier? = nil
   @State private var person: Person? = nil
@@ -126,6 +149,27 @@ struct CreateActionView: View {
     }
 
     dismiss()
+  }
+
+  private func createGroup() {
+    let trimmed = newGroupName.trimmingCharacters(in: .whitespacesAndNewlines)
+    newGroupName = ""
+
+    guard !trimmed.isEmpty, let family = stateManager.family else {
+      return
+    }
+
+    let group = ActionGroup(name: trimmed, family: family)
+    modelContext.insert(group)
+
+    do {
+      try modelContext.save()
+    } catch {
+      return
+    }
+
+    actionGroups = (actionGroups ?? []) + [group]
+    selectedActionGroup = group.persistentModelID
   }
 
   private func getPerson() {
