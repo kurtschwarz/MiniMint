@@ -19,23 +19,28 @@ extension MintyUI {
 
     var body: some View {
       ZStack {
-        ForEach(Array(slots.enumerated()), id: \.offset) { index, slot in
-          slotView(slot)
-            .overlay(
-              Circle().stroke(Color.white, lineWidth: ringWidth),
-            )
-            .offset(offset(for: index, of: slots.count))
-            .zIndex(Double(index))
-        }
+        // Avatars cut one another out: each punches a hole wider than itself into the
+        // ones already drawn beneath, so an overlap reads as a clear transparent gap —
+        // the background shows through — instead of a white ring.
+        ZStack {
+          ForEach(Array(slots.enumerated()), id: \.offset) { index, slot in
+            Circle()
+              .frame(width: size.frameSize + gapWidth * 2, height: size.frameSize + gapWidth * 2)
+              .offset(offset(for: index, of: slots.count))
+              .blendMode(.destinationOut)
 
-        // Drawn above the avatars so an overlapping dot stays a full circle
-        // instead of being clipped by an avatar's white ring.
+            slotView(slot)
+              .offset(offset(for: index, of: slots.count))
+          }
+        }
+        .compositingGroup()
+
+        // Drawn above the avatars so an overlapping dot stays a full circle.
         ForEach(Array(decorativeDots.enumerated()), id: \.offset) { _, dot in
           Circle()
             .fill(dot.color)
             .frame(width: dot.diameter, height: dot.diameter)
             .offset(dot.offset)
-            .zIndex(Double(slots.count))
         }
       }
       .frame(width: containerSize + dotMargin * 2, height: containerSize + dotMargin * 2)
@@ -122,16 +127,18 @@ extension MintyUI {
       ]
     }
 
-    private var ringWidth: CGFloat {
-      size == .small ? 2 : 3
+    /// Width of the transparent gap cut between overlapping avatars — scaled to the
+    /// avatar so it stays proportionally obvious at every size.
+    private var gapWidth: CGFloat {
+      size.frameSize * 0.1
     }
 
     @ViewBuilder
     private func slotView(_ slot: Slot) -> some View {
       switch slot {
-      case let .person(person):
+      case .person(let person):
         MintyUI.CircleAvatar(avatar: person.avatar, size: size)
-      case let .overflow(count):
+      case .overflow(let count):
         Text("+\(count)")
           .font(.system(size: size.fontSize * 0.5, weight: .bold))
           .foregroundStyle(Color.white)
@@ -146,11 +153,12 @@ extension MintyUI {
     private func offset(for index: Int, of count: Int) -> CGSize {
       guard count > 1 else { return .zero }
 
-      let angle: CGFloat = if count == 2 {
-        index == 0 ? .pi * 1.25 : .pi * 0.25
-      } else {
-        -CGFloat.pi / 2 + (2 * .pi / CGFloat(count)) * CGFloat(index)
-      }
+      let angle: CGFloat =
+        if count == 2 {
+          index == 0 ? .pi * 1.25 : .pi * 0.25
+        } else {
+          -CGFloat.pi / 2 + (2 * .pi / CGFloat(count)) * CGFloat(index)
+        }
 
       return CGSize(width: cos(angle) * radius, height: sin(angle) * radius)
     }
