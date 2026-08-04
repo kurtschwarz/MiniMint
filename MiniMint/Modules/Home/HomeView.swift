@@ -94,20 +94,6 @@ struct HomeView: View {
 //          },
 //        )
 //      }
-
-      ToolbarItem(placement: .topBarTrailing) {
-        Button(
-          action: {
-            stateManager.reset()
-          },
-          label: {
-            Image(systemName: "trash.fill").foregroundStyle(Color.white)
-            Text("Reset").foregroundStyle(Color.white)
-          },
-        )
-        .buttonStyle(.borderedProminent)
-        .accentColor(Color.red)
-      }
     })
     .padding(.horizontal, 20)
     .padding(.vertical, 20)
