@@ -24,24 +24,33 @@ final class Person {
   ) {
     self.name = name
     self.role = role
-    self.balance = balance
     self.family = family
     self.avatar = avatar
     self.sortOrder = sortOrder
 
-    ledger = .init()
+    ledger = Ledger(balance: balance)
   }
 
   // MARK: Internal
 
   var name: String
   var role: Role
-  var balance: Int64 = 0
   /// Position within its role's list, controlled by drag-to-reorder in the crew list.
-  var sortOrder: Int = 0
+  var sortOrder = 0
+
   @Relationship(.unique, deleteRule: .cascade) var avatar: Avatar?
   @Relationship(inverse: \Family.people) var family: Family?
+  /// The person's wallet. One-to-one for now; becomes one-to-many if we add
+  /// named "buckets" a person can split funds across.
   @Relationship(deleteRule: .cascade) var ledger: Ledger?
   /// Actions private to this person; deleted along with the person.
   @Relationship(deleteRule: .cascade, inverse: \Action.owner) var ownedActions: [Action] = []
+
+  /// Convenience access to the wallet balance. Reading and writing
+  /// `person.balance` forwards to the person's `ledger`.
+  @Transient var balance: Int64 {
+    get { ledger?.balance ?? 0 }
+    set { ledger?.balance = newValue }
+  }
+
 }

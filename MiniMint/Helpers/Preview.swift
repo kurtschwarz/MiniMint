@@ -29,11 +29,15 @@ class Preview {
       let deposits = family.actions.filter { $0.actionType == .deposit }
       let children = family.people.filter { $0.role == .child }
       for (personIndex, person) in children.enumerated() {
-        guard let ledger = person.ledger else { continue }
         for (actionIndex, action) in deposits.shuffled().prefix(2).enumerated() {
           let hoursAgo = Double(personIndex * 2 + actionIndex + 1)
-          let entry = LedgerEntry(ledger: ledger, date: .now.addingTimeInterval(-hoursAgo * 3600), action: action)
-          ledger.entries?.append(entry)
+          let entry = LedgerEntry(
+            ledger: person.ledger,
+            type: .deposit,
+            amount: action.amount,
+            date: .now.addingTimeInterval(-hoursAgo * 3600),
+            action: action,
+          )
           modelContainer.mainContext.insert(entry)
         }
       }

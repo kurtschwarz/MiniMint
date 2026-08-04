@@ -22,21 +22,21 @@ extension EnvironmentValues {
 
   var body: some Scene {
     WindowGroup {
-      NavigationStack(path: self.$stateManager.path) {
+      NavigationStack(path: $stateManager.path) {
         ZStack {
           initialView()
         }
         .navigationDestination(for: Route.self) { route in
           view(route: route)
         }
-        .sheet(item: self.$stateManager.sheet) { route in
+        .sheet(item: $stateManager.sheet) { route in
           view(route: route)
-            .presentationDetents([.medium, .large], selection: self.$stateManager.sheetPresentationDetent)
+            .presentationDetents([.medium, .large], selection: $stateManager.sheetPresentationDetent)
             .presentationDragIndicator(.automatic)
         }
       }
       .onNavigate { type in
-        self.stateManager.navigate(type: type)
+        stateManager.navigate(type: type)
       }
       .environment(stateManager)
       .preferredColorScheme(.light)
@@ -77,6 +77,9 @@ extension EnvironmentValues {
 
     case .createReward:
       CreateRewardView()
+
+    case .recordAction(let actionId, let personId):
+      RecordActionView(actionId: actionId, personId: personId)
     }
   }
 

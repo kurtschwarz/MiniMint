@@ -237,13 +237,13 @@ struct HomeView: View {
     stateManager.family?.currency?.name ?? "coins"
   }
 
-  /// The newest ledger entries across the whole family, most recent first.
-  private var recentActivity: [ActivityItem] {
+  /// The newest ledger entries across every wallet in the family, most recent
+  /// first.
+  private var recentActivity: [LedgerEntry] {
     (stateManager.family?.people ?? [])
-      .flatMap { person in
-        (person.ledger?.entries ?? []).map { ActivityItem(person: person, entry: $0) }
-      }
-      .sorted { ($0.entry.date ?? .distantPast) > ($1.entry.date ?? .distantPast) }
+      .compactMap(\.ledger)
+      .flatMap(\.entries)
+      .sorted { ($0.date ?? .distantPast) > ($1.date ?? .distantPast) }
       .prefix(5)
       .map { $0 }
   }
@@ -339,8 +339,10 @@ struct HomeView: View {
         activityEmptyState
       } else {
         VStack(spacing: 16) {
-          ForEach(recentActivity) { item in
-            MintyUI.ActivityRow(entry: item.entry, person: item.person)
+          ForEach(recentActivity) { entry in
+            if let person = entry.ledger?.person {
+              MintyUI.ActivityRow(entry: entry, person: person)
+            }
           }
         }
         .padding(.top, 14)
@@ -378,17 +380,6 @@ struct HomeView: View {
 private enum CardID: Hashable {
   case person(PersistentIdentifier)
   case add
-}
-
-// MARK: - ActivityItem
-
-/// Pairs a ledger entry with the person it belongs to, since an entry only
-/// links back to its `Ledger`.
-private struct ActivityItem: Identifiable {
-  let person: Person
-  let entry: LedgerEntry
-
-  var id: PersistentIdentifier { entry.persistentModelID }
 }
 
 #Preview {

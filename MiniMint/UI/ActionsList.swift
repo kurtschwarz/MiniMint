@@ -9,6 +9,7 @@ extension MintyUI {
     init(group: ActionGroup, type: ActionType, personId: PersistentIdentifier?) {
       self.group = group
       self.type = type
+      self.personId = personId
 
       let groupID = group.persistentModelID
       let typeValue = type.rawValue
@@ -41,6 +42,7 @@ extension MintyUI {
 
     var type: ActionType
     var group: ActionGroup
+    var personId: PersistentIdentifier?
 
     var body: some View {
       VStack(alignment: .leading, spacing: 8) {
@@ -72,7 +74,11 @@ extension MintyUI {
           VStack(spacing: 8) {
             ForEach(actions) { action in
               Button(action: {
-                // TODO: record this action against the current person.
+                guard let personId else { return }
+                navigate(.sheet(
+                  .recordAction(action.persistentModelID, personId),
+                  .large,
+                ))
               }) {
                 HStack {
                   Text(action.name)
@@ -120,6 +126,7 @@ extension MintyUI {
     private static let fadeRamp: CGFloat = 12
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.navigate) private var navigate
 
     @State private var sectionMinY: CGFloat = 0
     @State private var sectionHeight: CGFloat = 0

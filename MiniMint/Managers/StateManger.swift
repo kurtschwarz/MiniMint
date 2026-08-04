@@ -17,9 +17,12 @@ enum Route: Identifiable, Hashable {
   case createAction(PersistentIdentifier)
   case createReward
 
+  /// Record a ledger entry for `action` (first id) against `person` (second id).
+  case recordAction(PersistentIdentifier, PersistentIdentifier)
+
   // MARK: Internal
 
-  var id: Self { return self }
+  var id: Self { self }
 
 }
 
@@ -74,6 +77,10 @@ protocol StateManagerProtocol: AnyObject, Observable {
   var sheet: Route? = nil
   var secondarySheet: Route? = nil
   var sheetPresentationDetent = PresentationDetent.medium
+
+  /// Bumped each time an action is recorded, so screens can react — e.g. the
+  /// person screen jumps back to its Activity tab.
+  var recordedActionCount = 0
 
   var familyId: PersistentIdentifier? {
     get {

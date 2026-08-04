@@ -28,7 +28,7 @@ extension MintyUI {
           HStack(spacing: 4) {
             Text(person.name)
               .font(.system(size: 14, weight: .bold))
-            Text(actionType == .deposit ? "earned" : "spent")
+            Text(isCredit ? "earned" : "spent")
               .font(.system(size: 14, weight: .regular))
               .foregroundStyle(Color("dark_grey"))
           }
@@ -59,17 +59,19 @@ extension MintyUI {
     private let entry: LedgerEntry
     private let person: Person
 
-    private var actionType: ActionType {
-      entry.action?.actionType ?? .deposit
+    /// Whether this posting added to the balance; drives the wording, sign and
+    /// colour. Reads the entry's own type, not the source action.
+    private var isCredit: Bool {
+      entry.entryType == .deposit
     }
 
     private var amount: some View {
       HStack(spacing: 1) {
-        Text(actionType == .deposit ? "+" : "−")
+        Text(isCredit ? "+" : "−")
           .font(.system(size: 14, weight: .semibold))
-        MintyUI.CurrencyAmount(entry.action?.amount ?? 0, size: 14)
+        MintyUI.CurrencyAmount(entry.amount, size: 14)
       }
-      .foregroundStyle(actionType == .deposit ? Color("primary_green") : Color(hex: 0xD9544D))
+      .foregroundStyle(isCredit ? Color("primary_green") : Color(hex: 0xD9544D))
     }
   }
 }

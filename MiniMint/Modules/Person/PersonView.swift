@@ -22,8 +22,11 @@ struct PersonView: View {
 
   var personId: PersistentIdentifier? = nil
 
-  var activityView = PersonView.ActivityView()
   var rewardsView = PersonView.RewardsView()
+
+  var activityView: PersonView.ActivityView {
+    PersonView.ActivityView(personId: personId)
+  }
 
   var actionsView: PersonView.ActionsView {
     PersonView.ActionsView(personId: personId)
@@ -31,9 +34,10 @@ struct PersonView: View {
 
   var body: some View {
     MintyUI.ScrollingPageView(
-      tint: (person?.avatar != nil
-        ? Color(hex: person!.avatar!.background!)
-        : .accentColor
+      tint: (
+        person?.avatar != nil
+          ? Color(hex: person!.avatar!.background!)
+          : .accentColor,
       ),
       activePage: $activePage,
     ) {
@@ -47,8 +51,8 @@ struct PersonView: View {
             navigate(
               .sheet(
                 .selectAvatar(person!.avatar!.persistentModelID),
-                .large
-              )
+                .large,
+              ),
             )
           }
         }
@@ -111,6 +115,12 @@ struct PersonView: View {
           .adjust(saturation: 0.30, brightness: -0.35)
       }
     }
+    // Recording an action drops the adult back on the Activity tab to see it.
+    .onChange(of: stateManager.recordedActionCount) {
+      withAnimation(.easeInOut(duration: 0.25)) {
+        activePage = "Activity"
+      }
+    }
     .safeAreaInset(edge: .bottom, content: {
       if activePage == "Activity" {
         activityView.stickyBottomView(navigate: navigate)
@@ -126,7 +136,7 @@ struct PersonView: View {
   }
 
   func loadPerson() {
-    if personId != nil && person == nil {
+    if personId != nil, person == nil {
       person = modelContext.model(for: personId!) as? Person
     }
 
@@ -162,6 +172,7 @@ struct PersonView: View {
   @Environment(\.modelContext) private var modelContext
   @Environment(\.navigate) private var navigate
   @Environment(\.dismiss) private var dismiss
+  @Environment(StateManager.self) private var stateManager: StateManager
 }
 
 #Preview {
