@@ -24,6 +24,20 @@ class Preview {
       )
 
       modelContainer.mainContext.insert(family)
+
+      // Seed a little recent-activity history so dashboards preview populated.
+      let deposits = family.actions.filter { $0.actionType == .deposit }
+      let children = family.people.filter { $0.role == .child }
+      for (personIndex, person) in children.enumerated() {
+        guard let ledger = person.ledger else { continue }
+        for (actionIndex, action) in deposits.shuffled().prefix(2).enumerated() {
+          let hoursAgo = Double(personIndex * 2 + actionIndex + 1)
+          let entry = LedgerEntry(ledger: ledger, date: .now.addingTimeInterval(-hoursAgo * 3600), action: action)
+          ledger.entries?.append(entry)
+          modelContainer.mainContext.insert(entry)
+        }
+      }
+
       try modelContainer.mainContext.save()
 
       stateManager = StateManager(modelContext: modelContainer.mainContext)
