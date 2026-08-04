@@ -198,7 +198,7 @@ struct HomeView: View {
       VStack(spacing: 10) {
         Image(systemName: "plus")
           .font(.system(size: 26, weight: .regular))
-        Text("Add a little")
+        Text("Add a cardholder")
           .font(.system(size: 14, weight: .semibold))
       }
       .foregroundStyle(Color("dark_grey"))
