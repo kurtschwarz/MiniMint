@@ -53,7 +53,7 @@ struct SetupChildrenView: View {
         let person = Person(
           name: "",
           role: .child,
-          avatar: Avatar.generate(),
+          avatar: Avatar.generate(excluding: setupCoordinator.people.compactMap(\.avatar)),
         )
         setupCoordinator.people.append(person)
         focusedPerson = person.persistentModelID

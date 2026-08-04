@@ -70,8 +70,28 @@ final class Avatar: Codable {
   var background: UInt? = nil
   @Attribute(.externalStorage) var image: Data? = nil
 
-  static func generate() -> Avatar {
-    return .init(emoji: 0x1F424, background: 0xFFE0E2)
+  /// Emoji/background presets shown in the avatar selector, seeded from the
+  /// `emoji_avatars` dataset.
+  static var emojiOptions: [Avatar] = {
+    guard let asset = NSDataAsset(name: "emoji_avatars") else {
+      return []
+    }
+
+    return (try? JSONDecoder().decode([Avatar].self, from: asset.data)) ?? []
+  }()
+
+  /// A fresh avatar picked at random from the selector's presets, preferring
+  /// emoji not already used by `excluding`. Falls back to the full pool once
+  /// every preset is taken, and to a default when the dataset is unavailable.
+  static func generate(excluding used: [Avatar] = []) -> Avatar {
+    let usedEmoji = Set(used.compactMap(\.emoji))
+    let available = emojiOptions.filter { $0.emoji.map { !usedEmoji.contains($0) } ?? false }
+
+    guard let choice = available.randomElement() ?? emojiOptions.randomElement() else {
+      return .init(emoji: 0x1F424, background: 0xFFE0E2)
+    }
+
+    return .init(emoji: choice.emoji, background: choice.background)
   }
 
   func encode(to encoder: Encoder) throws {
