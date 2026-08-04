@@ -59,6 +59,9 @@ struct CreateActionView: View {
               .foregroundColor(.gray)
           ) {
             Toggle("Only for \(person!.name)", isOn: $onlyForThisPerson)
+              .allowsHitTesting(false)
+              .contentShape(Rectangle())
+              .onTapGesture { onlyForThisPerson.toggle() }
           }
         }
 
@@ -141,6 +144,7 @@ struct CreateActionView: View {
       action.group = (actionGroups ?? []).first {
         $0.persistentModelID == selectedActionGroup
       } ?? actionGroups?.first
+      action.owner = onlyForThisPerson ? person : nil
 
       modelContext.insert(action)
       try modelContext.save()

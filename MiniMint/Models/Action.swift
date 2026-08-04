@@ -43,5 +43,8 @@ final class Action {
   @Relationship var avatar: Avatar?
   @Relationship(inverse: \Family.actions) var family: Family?
   @Relationship(inverse: \ActionGroup.actions) var group: ActionGroup?
+  /// When set, the action is private to this person; `nil` means it is shared
+  /// with the whole family. The inverse lives on `Person.ownedActions`.
+  @Relationship var owner: Person?
 
 }

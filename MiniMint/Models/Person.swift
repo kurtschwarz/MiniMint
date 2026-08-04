@@ -42,4 +42,6 @@ final class Person {
   @Relationship(.unique, deleteRule: .cascade) var avatar: Avatar?
   @Relationship(inverse: \Family.people) var family: Family?
   @Relationship(deleteRule: .cascade) var ledger: Ledger?
+  /// Actions private to this person; deleted along with the person.
+  @Relationship(deleteRule: .cascade, inverse: \Action.owner) var ownedActions: [Action] = []
 }

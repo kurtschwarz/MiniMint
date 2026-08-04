@@ -6,23 +6,33 @@ extension MintyUI {
 
     // MARK: Lifecycle
 
-    init(group: ActionGroup, type: ActionType) {
+    init(group: ActionGroup, type: ActionType, personId: PersistentIdentifier?) {
       self.group = group
       self.type = type
 
       let groupID = group.persistentModelID
       let typeValue = type.rawValue
 
-      _actions = Query(
-        filter: #Predicate<Action> { action in
-          if let actionGroup = action.group {
-            return actionGroup.persistentModelID == groupID && action.type == typeValue
-          } else {
-            return false
-          }
-        },
-        sort: \.name,
-      )
+      // Show shared actions (no owner) plus any private to the viewed person.
+      if let personID = personId {
+        _actions = Query(
+          filter: #Predicate<Action> { action in
+            action.group?.persistentModelID == groupID
+              && action.type == typeValue
+              && (action.owner == nil || action.owner?.persistentModelID == personID)
+          },
+          sort: \.name,
+        )
+      } else {
+        _actions = Query(
+          filter: #Predicate<Action> { action in
+            action.group?.persistentModelID == groupID
+              && action.type == typeValue
+              && action.owner == nil
+          },
+          sort: \.name,
+        )
+      }
     }
 
     // MARK: Internal
@@ -68,6 +78,16 @@ extension MintyUI {
                   Text(action.name)
 
                   Spacer()
+
+                  // Marks an action that is private to this person rather than
+                  // shared with the whole family.
+                  if action.owner != nil {
+                    Image(systemName: "person.fill")
+                      .font(.system(size: 11, weight: .semibold))
+                      .foregroundStyle(.secondary)
+                      .frame(width: 22, height: 22)
+                      .background(.white, in: Circle())
+                  }
 
                   MintyUI.CurrencyAmount(action.amount)
                 }
@@ -123,8 +143,9 @@ extension MintyUI {
 
     // MARK: Lifecycle
 
-    init(familyId: PersistentIdentifier?, type: ActionType) {
+    init(familyId: PersistentIdentifier?, type: ActionType, personId: PersistentIdentifier? = nil) {
       self.type = type
+      self.personId = personId
 
       if let familyId {
         _groups = Query(
@@ -150,11 +171,12 @@ extension MintyUI {
     @Query var groups: [ActionGroup]
 
     var type: ActionType
+    var personId: PersistentIdentifier?
 
     var body: some View {
       LazyVStack(alignment: .leading, spacing: 28) {
         ForEach(groups) { group in
-          ActionsSection(group: group, type: type)
+          ActionsSection(group: group, type: type, personId: personId)
         }
       }
     }

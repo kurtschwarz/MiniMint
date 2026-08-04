@@ -23,8 +23,11 @@ struct PersonView: View {
   var personId: PersistentIdentifier? = nil
 
   var activityView = PersonView.ActivityView()
-  var actionsView = PersonView.ActionsView()
   var rewardsView = PersonView.RewardsView()
+
+  var actionsView: PersonView.ActionsView {
+    PersonView.ActionsView(personId: personId)
+  }
 
   var body: some View {
     MintyUI.ScrollingPageView(

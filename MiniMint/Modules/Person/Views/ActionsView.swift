@@ -25,11 +25,14 @@ extension PersonView {
 
     // MARK: Internal
 
+    var personId: PersistentIdentifier?
+
     var body: some View {
       VStack(alignment: .leading) {
         MintyUI.ActionsList(
           familyId: stateManager.family?.persistentModelID,
           type: .deposit,
+          personId: personId,
         )
       }
       .padding(.vertical, 20)
