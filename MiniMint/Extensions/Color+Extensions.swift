@@ -25,7 +25,7 @@ extension Color {
   static func groupWash(
     for avatars: [Avatar],
     saturation: CGFloat = 0.114,
-    brightness: CGFloat = 0.96,
+    brightness: CGFloat = 0.99,
   ) -> Color {
     let neutral = Color("light_gray")
 

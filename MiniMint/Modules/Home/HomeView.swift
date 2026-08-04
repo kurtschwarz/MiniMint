@@ -13,20 +13,32 @@ struct HomeView: View {
         VStack(spacing: 0) {
           // Heading + summary sit on the hero wash that runs up under the status bar.
           VStack(spacing: 0) {
-            HStack(alignment: .center, spacing: 16) {
+            HStack(alignment: .center, spacing: 4) {
               MintyUI.AvatarGroup(
                 people: littles,
+                size: .small,
               )
 
-              VStack(alignment: .leading, spacing: 0) {
+              VStack(alignment: .leading, spacing: -4) {
                 Text("the")
-                  .font(.system(size: 14, weight: .medium))
+                  .font(.system(size: 12, weight: .medium))
                 Text(stateManager.family?.name ?? "")
                   .font(.system(size: 28, weight: .bold, design: .serif))
-                Text("family")
-                  .font(.system(size: 14, weight: .medium))
+                  .lineLimit(1)
+                  .minimumScaleFactor(0.6)
               }
               .multilineTextAlignment(.leading)
+
+              Spacer(minLength: 12)
+
+              Button(action: { }) {
+                Image(systemName: "line.3.horizontal")
+                  .font(.system(size: 22, weight: .medium))
+                  .foregroundStyle(Color("dark_grey"))
+                  .frame(width: 44, height: 44, alignment: .trailing)
+                  .contentShape(Rectangle())
+              }
+              .buttonStyle(.plain)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.bottom, 20)
@@ -44,7 +56,7 @@ struct HomeView: View {
           .padding(.top, proxy.safeAreaInsets.top)
           .frame(maxWidth: .infinity)
           // Wash fills the whole hero, status-bar area included — no white strip on top.
-          .background(heroBackground)
+          .background(heroFill)
 
           // The rest of the content rides on a white sheet with rounded top corners.
           VStack(spacing: 0) {
@@ -102,7 +114,7 @@ struct HomeView: View {
       // seam between the two sits mid-screen, always covered by opaque content.
       .background {
         VStack(spacing: 0) {
-          heroBackground
+          heroFill
           Color.white
         }
         .ignoresSafeArea()
@@ -145,7 +157,22 @@ struct HomeView: View {
     if let activeAvatar {
       return Color.groupWash(for: [activeAvatar])
     }
+
     return Color.groupWash(for: littles.compactMap(\.avatar))
+  }
+
+  /// The hero backdrop: the per-card wash, lightened toward the top by a soft
+  /// white-to-clear gradient so the status-bar area reads airier than the base
+  /// of the hero. The wash underneath still crossfades as the carousel scrolls.
+  private var heroFill: some View {
+    ZStack {
+      heroBackground
+      LinearGradient(
+        colors: [Color.white.opacity(0.5), Color.white.opacity(0)],
+        startPoint: .top,
+        endPoint: .bottom,
+      )
+    }
   }
 
   private var littles: [Person] {
