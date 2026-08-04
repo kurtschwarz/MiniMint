@@ -162,29 +162,28 @@ struct HomeView: View {
     }
   }
 
-  /// A very subtle wash behind the heading, tinted toward the centered card's
-  /// avatar so the hero tracks the carousel. Falls back to a blend across the
-  /// family (add card / no selection) and to neutral grey when there's no colour.
-  private var heroBackground: Color {
-    if let activeAvatar {
-      return Color.groupWash(for: [activeAvatar])
-    }
-
-    return Color.groupWash(for: littles.compactMap(\.avatar))
+  /// The centered card's own colour — the avatar's background — which the hero
+  /// gradient runs down into. Falls back to neutral grey when there's no colour
+  /// (add card / no selection / no avatar).
+  private var cardColour: Color {
+    let base = activeAvatar?.background.map { Color(hex: $0) } ?? Color("light_gray")
+    return base.mix(with: .white, by: 0.4)
   }
 
-  /// The hero backdrop: the per-card wash, lightened toward the top by a soft
-  /// white-to-clear gradient so the status-bar area reads airier than the base
-  /// of the hero. The wash underneath still crossfades as the carousel scrolls.
+  /// The hero backdrop: a slanted linear gradient with the app's base mint
+  /// anchored toward the top-left — starting 20% left of centre — sweeping down
+  /// into the centered card's colour at the bottom, so the hero tracks the
+  /// carousel and crossfades as the centered card changes.
   private var heroFill: some View {
-    ZStack {
-      heroBackground
-      LinearGradient(
-        colors: [Color.white.opacity(0.5), Color.white.opacity(0)],
-        startPoint: .top,
-        endPoint: .bottom,
-      )
-    }
+    LinearGradient(
+      stops: [
+        .init(color: Color("background_primary"), location: 0),
+        .init(color: Color("background_primary"), location: 0.20),
+        .init(color: cardColour, location: 1),
+      ],
+      startPoint: UnitPoint(x: 0.2, y: 0),
+      endPoint: UnitPoint(x: 0.7, y: 1),
+    )
   }
 
   private var littles: [Person] {
