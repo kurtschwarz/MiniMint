@@ -78,6 +78,18 @@ struct HomeView: View {
             )
             .fill(Color.white),
           )
+          // A soft shadow cast only from the sheet's rounded top edge onto the gradient hero.
+          // A short caster sits behind the white fill so the shadow reads at the seam; the fill
+          // hides its lower edge, keeping a stray shadow line from floating in the white below.
+          .background(alignment: .top) {
+            UnevenRoundedRectangle(
+              topLeadingRadius: MintyUI.Radius.standard,
+              topTrailingRadius: MintyUI.Radius.standard,
+            )
+            .fill(Color.white)
+            .frame(height: 40)
+            .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: -3)
+          }
           // Pull the sheet up so its rounded corners overlap the grey hero and read against it.
           .padding(.top, -MintyUI.Radius.standard)
         }
