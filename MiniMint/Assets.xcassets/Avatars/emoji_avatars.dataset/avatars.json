@@ -5,5 +5,18 @@
   { "emoji": "0x1F60D", "background": "0xFFC3E0" },
   { "emoji": "0x1F64A", "background": "0xFFF0B2" },
   { "emoji": "0x1F98A", "background": "0xCFFFA8" },
-  { "emoji": "0x1F986", "background": "0xA8FFF0" }
+  { "emoji": "0x1F986", "background": "0xA8FFF0" },
+  { "emoji": "0x1F981", "background": "0xFFD1A8" },
+  { "emoji": "0x1F419", "background": "0xFFB3AB" },
+  { "emoji": "0x1F425", "background": "0xFFE59E" },
+  { "emoji": "0x1F42C", "background": "0xB2E3FF" },
+  { "emoji": "0x1F438", "background": "0xB8FFD4" },
+  { "emoji": "0x1F427", "background": "0xC3D4FF" },
+  { "emoji": "0x1F984", "background": "0xE4CDFF" },
+  { "emoji": "0x1F437", "background": "0xFFCAD4" },
+  { "emoji": "0x1F41D", "background": "0xFFD98A" },
+  { "emoji": "0x1F433", "background": "0x9ED8FF" },
+  { "emoji": "0x1F989", "background": "0xE8D5B0" },
+  { "emoji": "0x1F422", "background": "0x9CEBC0" },
+  { "emoji": "0x1F420", "background": "0x9AEDE0" }
 ]
