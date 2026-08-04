@@ -39,6 +39,11 @@ extension MintyUI {
         }
       }
       .frame(width: containerSize + dotMargin * 2, height: containerSize + dotMargin * 2)
+      // The cluster is centered inside a symmetric frame padded for the decorative
+      // dots, which leaves the leftmost avatar inset from the leading edge. Pull the
+      // frame's leading edge back to that avatar so the group lines up with adjacent
+      // content; the dots are free to overflow into the margin.
+      .padding(.leading, -leadingAvatarInset)
     }
 
     // MARK: Private
@@ -73,6 +78,14 @@ extension MintyUI {
     /// Extra breathing room around the cluster so the decorative dots have somewhere to sit.
     private var dotMargin: CGFloat {
       size.frameSize * 0.22
+    }
+
+    /// Distance from the frame's leading edge to the leftmost avatar's leading edge.
+    private var leadingAvatarInset: CGFloat {
+      let minX = (0 ..< slots.count)
+        .map { offset(for: $0, of: slots.count).width }
+        .min() ?? 0
+      return dotMargin + radius + minX
     }
 
     /// Scattered background dots, positioned relative to the cluster center and scaled to the avatar size.
