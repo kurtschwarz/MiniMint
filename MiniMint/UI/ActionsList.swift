@@ -41,7 +41,13 @@ extension MintyUI {
       ) {
         if actions.isEmpty == false {
           ForEach(actions) { action in
-            Text(action.name)
+            HStack {
+              Text(action.name)
+
+              Spacer()
+
+              MintyUI.CurrencyAmount(action.amount)
+            }
           }
         } else {
           Text("No actions found")
@@ -87,7 +93,7 @@ extension MintyUI {
     var type: ActionType
 
     var body: some View {
-      LazyVStack(alignment: .leading, spacing: 14) {
+      LazyVStack(alignment: .leading, spacing: 28) {
         ForEach(groups) { group in
           ActionsSection(group: group, type: type)
         }

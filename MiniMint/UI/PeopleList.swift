@@ -98,19 +98,7 @@ extension MintyUI {
           .padding(.bottom, 2)
 
         if showBalance {
-          HStack {
-            Text(String(person.balance))
-              .font(.system(size: 14, weight: .medium))
-          }
-          .padding(.trailing, 11)
-          .background(
-            alignment: .trailing,
-            content: {
-              Image("coin_icon")
-                .resizable()
-                .frame(width: 16, height: 16)
-            },
-          )
+          MintyUI.CurrencyAmount(person.balance)
         }
       }
       .background(
