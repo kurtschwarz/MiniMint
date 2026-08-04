@@ -22,7 +22,7 @@ struct HomeView: View {
               VStack(alignment: .leading, spacing: -4) {
                 Text("the")
                   .font(.system(size: 12, weight: .medium))
-                Text(stateManager.family?.name ?? "")
+                Text(stateManager.family?.name.pluralizedFamilyName ?? "")
                   .font(.system(size: 28, weight: .bold, design: .serif))
                   .lineLimit(1)
                   .minimumScaleFactor(0.6)
