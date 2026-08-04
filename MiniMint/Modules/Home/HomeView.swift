@@ -31,14 +31,12 @@ struct HomeView: View {
 
               Spacer(minLength: 12)
 
-              Button(action: { }) {
-                Image(systemName: "line.3.horizontal")
-                  .font(.system(size: 22, weight: .medium))
-                  .foregroundStyle(Color("dark_grey"))
-                  .frame(width: 44, height: 44, alignment: .trailing)
-                  .contentShape(Rectangle())
-              }
-              .buttonStyle(.plain)
+              // Reserve the trailing space the overflow button occupies; the button
+              // itself is pinned in the screen-level overlay below so it can morph
+              // into its menu without being clipped by the scroll view.
+              Color.clear
+                .frame(width: 44, height: 44)
+                .allowsHitTesting(false)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.bottom, 20)
@@ -135,6 +133,25 @@ struct HomeView: View {
       .animation(.easeInOut(duration: 0.35), value: selectedCard)
       .navigationBarBackButtonHidden(true)
     }
+    // The overflow menu rides on the screen root — outside the ScrollView — so the
+    // button, the panel it morphs into, and the dismiss scrim escape the scroll
+    // view's clipping. The inset pins the button where the header reserves its space.
+    .glassMenu(
+      isPresented: $menuExpanded,
+      inset: EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20),
+      items: menuItems,
+    )
+    // Resetting cascade-deletes the whole family and can't be undone, so gate it
+    // behind an explicit confirmation.
+    .glassConfirmation(
+      isPresented: $showResetConfirmation,
+      title: "Reset all data?",
+      message: "This permanently deletes your family, everyone in it, and all activity. This can't be undone.",
+      confirmTitle: "Reset all data",
+      isDestructive: true,
+    ) {
+      stateManager.reset()
+    }
   }
 
   // MARK: Private
@@ -151,6 +168,27 @@ struct HomeView: View {
   /// Which carousel card is currently centered; drives the hero wash. `nil` before
   /// the first scroll, which reads as the first card resting under the viewport.
   @State private var selectedCard: CardID?
+
+  /// Whether the burger's Liquid Glass overflow menu is open.
+  @State private var menuExpanded = false
+
+  /// Whether the destructive "Reset all data" confirmation is showing.
+  @State private var showResetConfirmation = false
+
+  /// Actions offered by the burger's overflow menu.
+  private var menuItems: [MintyUI.GlassMenuItem] {
+    [
+      MintyUI.GlassMenuItem(title: "Add a cardholder", systemImage: "person.crop.circle.badge.plus") {
+        navigate(.sheet(.createPerson(.child)))
+      },
+      MintyUI.GlassMenuItem(title: "Add a finance manager", systemImage: "person.2.badge.plus") {
+        navigate(.sheet(.createPerson(.parent)))
+      },
+      MintyUI.GlassMenuItem(title: "Reset all data", systemImage: "trash", role: .destructive) {
+        showResetConfirmation = true
+      },
+    ]
+  }
 
   /// The avatar the hero wash should tint toward: the centered Little's, or `nil`
   /// on the add card (no specific child). Before any scroll, the first Little's.
