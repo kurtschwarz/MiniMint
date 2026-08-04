@@ -27,6 +27,20 @@ extension MintyUI {
               endPoint: .bottomTrailing,
             ),
           )
+          // A very subtle inner shadow: a faint light edge along the top and a
+          // soft dark edge along the bottom so the card reads as slightly raised.
+          .overlay {
+            RoundedRectangle(cornerRadius: MintyUI.Radius.standard, style: .continuous)
+              .stroke(
+                LinearGradient(
+                  colors: [Color.white.opacity(0.45), Color.black.opacity(0.16)],
+                  startPoint: .topLeading,
+                  endPoint: .bottomTrailing,
+                ),
+                lineWidth: 1,
+              )
+              .blur(radius: 0.5)
+          }
 
         VStack(alignment: .leading, spacing: 0) {
           HStack(alignment: .top) {
@@ -57,7 +71,7 @@ extension MintyUI {
         .padding(20)
       }
       .aspectRatio(1.586, contentMode: .fit)
-      .shadow(color: baseColor.opacity(0.55), radius: 14, x: 0, y: 10)
+      .shadow(color: Color.black.opacity(0.12), radius: 6, x: 0, y: 3)
     }
 
     // MARK: Private
