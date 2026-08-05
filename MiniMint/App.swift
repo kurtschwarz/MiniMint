@@ -5,6 +5,7 @@ import SwiftUI
 extension EnvironmentValues {
   @Entry var navigate = NavigateAction(action: { _ in })
   @Entry var stateManager: any StateManagerProtocol = NullStateManager()
+  @Entry var ledgerManager: LedgerManager? = nil
 }
 
 // MARK: - App
@@ -14,7 +15,11 @@ extension EnvironmentValues {
   // MARK: Lifecycle
 
   init() {
-    stateManager = StateManager(modelContext: SwiftDataManager.shared.container.mainContext)
+    let modelContext = SwiftDataManager.shared.container.mainContext
+
+    stateManager = StateManager(modelContext: modelContext)
+    ledgerManager = LedgerManager(modelContext: modelContext)
+
     stateManager.restore()
   }
 
@@ -39,6 +44,7 @@ extension EnvironmentValues {
         stateManager.navigate(type: type)
       }
       .environment(stateManager)
+      .environment(\.ledgerManager, ledgerManager)
       .preferredColorScheme(.light)
     }
     .modelContainer(SwiftDataManager.shared.container)
@@ -86,4 +92,6 @@ extension EnvironmentValues {
   // MARK: Private
 
   @State private var stateManager: StateManager
+
+  private let ledgerManager: LedgerManager
 }

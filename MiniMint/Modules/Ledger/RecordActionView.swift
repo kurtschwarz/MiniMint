@@ -53,6 +53,14 @@ struct RecordActionView: View {
               .lineLimit(1 ... 4)
           }
 
+          if let errorMessage {
+            Section {
+              Text(errorMessage)
+                .font(.caption)
+                .foregroundColor(.red)
+            }
+          }
+
           Button(
             action: {
               record()
@@ -109,44 +117,18 @@ struct RecordActionView: View {
     }
   }
 
-  /// Post the tapped action into the person's wallet and move its balance by
-  /// the entry's signed amount.
+  /// Post the tapped action into the person's wallet via `LedgerManager`,
+  /// which validates the withdrawal and moves the balance. A rejected recording
+  /// (e.g. insufficient funds) surfaces its reason inline.
   func record() {
-    guard let action, let person else {
+    guard let action, let person, let ledgerManager else {
       return
     }
 
-    // Every person gets a wallet at creation, but guard so a legacy person
-    // without one still records cleanly.
-    let ledger: Ledger
-    if let existing = person.ledger {
-      ledger = existing
-    } else {
-      ledger = Ledger(person: person)
-      person.ledger = ledger
-    }
-
-    let trimmedNote = note.trimmingCharacters(in: .whitespacesAndNewlines)
-
-    // Snapshot the type and amount now so the entry keeps its value even if the
-    // source action is later edited or deleted.
-    let entryType: LedgerEntryType = action.actionType == .deposit ? .deposit : .withdrawl
-
-    let entry = LedgerEntry(
-      ledger: ledger,
-      type: entryType,
-      amount: action.amount,
-      date: date,
-      action: action,
-      note: trimmedNote.isEmpty ? nil : trimmedNote,
-    )
-    modelContext.insert(entry)
-
-    ledger.balance += entry.signedAmount
-
     do {
-      try modelContext.save()
+      try ledgerManager.record(action: action, for: person, on: date, note: note)
     } catch {
+      errorMessage = error.localizedDescription
       return
     }
 
@@ -162,9 +144,11 @@ struct RecordActionView: View {
   @State private var person: Person? = nil
   @State private var date = Date.now
   @State private var note = ""
+  @State private var errorMessage: String? = nil
 
   @Environment(\.dismiss) private var dismiss
   @Environment(\.modelContext) private var modelContext
+  @Environment(\.ledgerManager) private var ledgerManager
   @Environment(StateManager.self) private var stateManager: StateManager
 
   private let actionId: PersistentIdentifier
@@ -187,5 +171,6 @@ struct RecordActionView: View {
       .presentationDetents([.medium, .large], selection: .constant(.medium))
     }
     .environment(preview.stateManager)
+    .environment(\.ledgerManager, LedgerManager(modelContext: preview.modelContainer.mainContext))
     .modelContainer(preview.modelContainer)
 }
