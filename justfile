@@ -41,3 +41,7 @@ run: boot build
 # Uninstall the app from the booted simulator.
 uninstall:
     xcrun simctl uninstall booted {{bundle_id}}
+
+# Build, run, and rebuild on source changes.
+dev: run
+    fswatch -o -e '\.build' MiniMint/ | xargs -n1 -I{} just run
