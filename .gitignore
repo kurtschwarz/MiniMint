@@ -7,4 +7,6 @@ xcuserdata/
 /*.gcno
 **/xcshareddata/WorkspaceSettings.xcsettings
 
+.build/
+
 .DS_Store
