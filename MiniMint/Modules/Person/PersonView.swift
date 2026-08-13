@@ -42,39 +42,25 @@ struct PersonView: View {
       activePage: $activePage,
     ) {
       VStack(alignment: .center) {
-        if person?.avatar != nil {
-          MintyUI.CircleAvatar(
-            avatar: (person?.avatar)!,
-            size: .large,
+        if let person {
+          MintyUI.ChildCard(
+            person: person,
+            currencyName: person.family?.currency?.name ?? "Coins",
           )
           .onTapGesture {
-            navigate(
-              .sheet(
-                .selectAvatar(person!.avatar!.persistentModelID),
-                .large,
-              ),
-            )
+            if let avatarId = person.avatar?.persistentModelID {
+              navigate(
+                .sheet(
+                  .selectAvatar(avatarId),
+                  .large,
+                ),
+              )
+            }
           }
+          .padding(.horizontal, 20)
         }
 
-        if let person {
-          TextField("Name", text: Binding(
-            get: { person.name },
-            set: { person.name = $0 },
-          ))
-          .font(.system(size: 22, weight: .bold))
-          .multilineTextAlignment(.center)
-          .keyboardType(.asciiCapable)
-          .disableAutocorrection(true)
-          .submitLabel(.done)
-          .focused($isEditingName)
-          .onSubmit(commitName)
-          .padding(.top, 10)
-        } else {
-          Text("Unknown")
-            .font(.system(size: 22, weight: .bold))
-            .padding(.top, 10)
-        }
+
       }
       .frame(maxWidth: .infinity, alignment: .center)
       .padding(.top, 5)
@@ -101,8 +87,29 @@ struct PersonView: View {
         .tint(toolbarTintColor)
         .accessibilityLabel("Back")
       }
+
+      ToolbarItem(placement: .principal) {
+        if let person {
+          TextField("Name", text: Binding(
+            get: { person.name },
+            set: { person.name = $0 },
+          ))
+          .font(.system(size: 18, weight: .bold))
+          .multilineTextAlignment(.center)
+          .keyboardType(.asciiCapable)
+          .disableAutocorrection(true)
+          .submitLabel(.done)
+          .focused($isEditingName)
+          .onSubmit(commitName)
+        } else {
+          Text("Unknown")
+            .font(.system(size: 18, weight: .bold))
+        }
+      }
+
     }
     .navigationBarBackButtonHidden(true)
+    .toolbarTitleDisplayMode(.inline)
     .onAppear(perform: loadPerson)
     .onChange(of: isEditingName) { _, editing in
       if !editing {
