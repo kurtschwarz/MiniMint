@@ -27,7 +27,7 @@ struct CreatePersonView: View {
         .disabled(!canSave)
       }
       .listStyle(.plain)
-      .navigationTitle(person.role == .child ? "Add Little" : "Add Adult")
+      .navigationTitle(person.role == .child ? "Add cardholder" : "Add Adult")
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
