@@ -25,7 +25,7 @@ struct RecordActionView: View {
                 Text(action.name)
                   .fontWeight(.medium)
 
-                Text(action.actionType == .deposit
+                Text(action.actionType.isDeposit
                   ? "Earns for \(person.name)"
                   : "Spends from \(person.name)")
                   .font(.caption)
@@ -66,7 +66,7 @@ struct RecordActionView: View {
               record()
             },
             label: {
-              Text(action.actionType == .deposit ? "Add to Balance" : "Subtract from Balance")
+              Text(action.actionType.isDeposit ? "Add to Balance" : "Subtract from Balance")
             },
           )
         } else {

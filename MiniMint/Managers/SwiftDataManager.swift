@@ -15,6 +15,7 @@ import SwiftData
       ActionGroup.self,
       Ledger.self,
       LedgerEntry.self,
+      ScheduledAction.self,
     ])
 
     #if DEBUG

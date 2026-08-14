@@ -57,15 +57,33 @@ struct PersonView: View {
               )
             }
           }
-          .padding(.horizontal, 20)
-        }
+      .padding(.horizontal, 20)
+
+          ScrollView(.horizontal) {
+            HStack(spacing: 10) {
+              Button {
+                showAllowance = true
+              } label: {
+                Label("Allowance", systemImage: "dollarsign.arrow.trianglehead.counterclockwise.rotate.90")
+                  .font(.system(size: 14, weight: .medium))
+                  .foregroundStyle(Color("dark_grey"))
+                  .padding(.horizontal, 14)
+                  .padding(.vertical, 8)
+              }
+              .buttonStyle(.plain)
+              .background(.ultraThinMaterial, in: Capsule())
+            }
+            .padding(.horizontal, 30)
+          }
+          .scrollIndicators(.hidden)
+    }
 
 
-      }
-      .frame(maxWidth: .infinity, alignment: .center)
-      .padding(.top, 5)
-      .padding(.bottom, 20)
-      .padding(.horizontal, 10)
+  }
+  .frame(maxWidth: .infinity, alignment: .center)
+  .padding(.top, 5)
+  .padding(.bottom, 20)
+  .padding(.horizontal, 10)
     } labels: {
       activityView.pageLabel()
       actionsView.pageLabel()
@@ -128,6 +146,12 @@ struct PersonView: View {
         activePage = "Activity"
       }
     }
+    .sheet(isPresented: $showAllowance) {
+      if let person {
+        AllowanceView(person: person)
+          .presentationDetents([.large])
+      }
+    }
     .safeAreaInset(edge: .bottom, content: {
       if activePage == "Activity" {
         activityView.stickyBottomView(navigate: navigate)
@@ -173,6 +197,7 @@ struct PersonView: View {
 
   @State private var toolbarTintColor = Color.primaryGreen
   @State private var committedName = ""
+  @State private var showAllowance = false
 
   @FocusState private var isEditingName: Bool
 

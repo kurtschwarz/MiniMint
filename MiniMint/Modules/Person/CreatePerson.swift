@@ -73,10 +73,8 @@ struct CreatePersonView: View {
 
     do {
       modelContext.insert(person)
-      // Append to the relationship directly (rather than setting `person.family`)
-      // so the change to `family.people` is observed and the crew list refreshes
-      // immediately instead of only after a relaunch.
       family.people.append(person)
+      person.ensureAllowance(context: modelContext)
       try modelContext.save()
     } catch {
       return

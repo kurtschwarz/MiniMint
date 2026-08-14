@@ -6,10 +6,15 @@ import SwiftData
 enum ActionType: Int, Codable, CaseIterable, Identifiable {
   case deposit
   case withdrawl
+  case allowance
 
   // MARK: Internal
 
   var id: Self { self }
+
+  var isDeposit: Bool {
+    self == .deposit || self == .allowance
+  }
 }
 
 // MARK: - Action
@@ -46,5 +51,6 @@ final class Action {
   /// When set, the action is private to this person; `nil` means it is shared
   /// with the whole family. The inverse lives on `Person.ownedActions`.
   @Relationship var owner: Person?
+  @Relationship(deleteRule: .cascade) var scheduledActions: [ScheduledAction] = []
 
 }

@@ -45,12 +45,45 @@ final class Person {
   @Relationship(deleteRule: .cascade) var ledger: Ledger?
   /// Actions private to this person; deleted along with the person.
   @Relationship(deleteRule: .cascade, inverse: \Action.owner) var ownedActions: [Action] = []
+  @Relationship(deleteRule: .cascade) var scheduledActions: [ScheduledAction] = []
 
   /// Convenience access to the wallet balance. Reading and writing
   /// `person.balance` forwards to the person's `ledger`.
   @Transient var balance: Int64 {
     get { ledger?.balance ?? 0 }
     set { ledger?.balance = newValue }
+  }
+
+  @discardableResult
+  func ensureAllowance(context: ModelContext) -> (action: Action, schedule: ScheduledAction)? {
+    guard role == .child else {
+      return nil
+    }
+
+    if let existingAction = ownedActions.first(where: { $0.actionType == .allowance }),
+       let existingSchedule = scheduledActions.first(where: { $0.action?.actionType == .allowance })
+    {
+      return (existingAction, existingSchedule)
+    }
+
+    let action = Action(name: "Allowance", type: .allowance)
+    action.owner = self
+    action.family = family
+
+    let schedule = ScheduledAction(
+      name: "Allowance",
+      action: action,
+      person: self,
+      family: family,
+      frequency: .recurring,
+      intervalDays: AllowanceFrequency.weekly.rawValue,
+      isActive: false,
+    )
+
+    context.insert(action)
+    context.insert(schedule)
+
+    return (action, schedule)
   }
 
 }

@@ -45,6 +45,7 @@ final class Family {
 
   @Relationship(deleteRule: .cascade) var actionGroups: [ActionGroup]
   @Relationship(deleteRule: .cascade) var actions: [Action]
+  @Relationship(deleteRule: .cascade) var scheduledActions: [ScheduledAction] = []
 
   static func generateName() -> String {
     if Family.generatedNamesCache.current.isEmpty {

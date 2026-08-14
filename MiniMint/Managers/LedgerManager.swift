@@ -56,7 +56,7 @@ struct LedgerManager {
   ) throws -> LedgerEntry {
     // Snapshot the type and amount now so the entry keeps its value even if the
     // source action is later edited or deleted.
-    let entryType: LedgerEntryType = action.actionType == .deposit ? .deposit : .withdrawl
+    let entryType: LedgerEntryType = action.actionType.isDeposit ? .deposit : .withdrawl
 
     return try post(
       type: entryType,
