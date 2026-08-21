@@ -1,8 +1,8 @@
 project    := "MiniMint.xcodeproj"
 scheme     := "MiniMint"
 bundle_id  := "ca.minimint.MiniMint"
-simulator  := "iPhone 16"
-os         := "18.4"
+simulator  := "iPhone 17"
+os         := "26.5"
 derived    := ".build/DerivedData"
 
 destination := "platform=iOS Simulator,name=" + simulator + ",OS=" + os

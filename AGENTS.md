@@ -13,13 +13,24 @@ MiniMint is a native iOS app for tracking a family's chore-and-reward economy. P
 
 ## Build & test
 
-```bash
-# Build
-xcodebuild -project MiniMint.xcodeproj -scheme MiniMint -destination 'platform=iOS Simulator,name=iPhone 16' build
+Common tasks are wrapped in the [`justfile`](justfile) (run `just` to list them):
 
-# Unit + UI tests
-xcodebuild -project MiniMint.xcodeproj -scheme MiniMint -destination 'platform=iOS Simulator,name=iPhone 16' test
+```bash
+# Build the app for the simulator
+just build
+
+# Run unit + UI tests
+just test
+
+# Build, install, and launch on the booted simulator
+just run
 ```
+
+## Running & driving the simulator
+
+- Use the **mobile-mcp** tools to control the iPhone simulator (launch, tap, screenshot, inspect view hierarchy) rather than driving the UI by hand.
+- Prefer testing on an **iPhone 17 running iOS 26+** by default; fall back to another available simulator only when that device is not present.
+- **Always reload the simulator once all code changes are complete** so the running app reflects the latest build (e.g. `just run`, which builds, installs, and relaunches on the booted simulator).
 
 ## Project structure
 
