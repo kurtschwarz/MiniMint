@@ -69,6 +69,19 @@ struct AllowanceView: View {
           Text(hasExisting ? "Save Changes" : "Set Allowance")
         }
         .disabled(!canSave)
+
+        if NotificationManager.isDebugToolingAvailable {
+          Section(header: Text("Developer Tools")) {
+            Button("Test Push Notification") {
+              NotificationManager.shared.sendTestNotification(for: person)
+            }
+
+            Button("Deposit Allowance Now") {
+              depositNow()
+            }
+            .disabled(!canSave)
+          }
+        }
       }
       .navigationTitle("Allowance")
       .navigationBarTitleDisplayMode(.inline)
@@ -109,6 +122,7 @@ struct AllowanceView: View {
 
   @Environment(\.dismiss) private var dismiss
   @Environment(\.modelContext) private var modelContext
+  @Environment(\.ledgerManager) private var ledgerManager
 
   private var canSave: Bool {
     amount > 0
@@ -152,7 +166,20 @@ struct AllowanceView: View {
     }
 
     try? modelContext.save()
+    NotificationManager.shared.refresh(for: person)
     dismiss()
+  }
+
+  /// Developer tool: post the allowance to the ledger immediately, using the
+  /// amount currently entered, without waiting for the schedule to come due.
+  private func depositNow() {
+    guard amount > 0 else { return }
+
+    let action = findOrCreateAction()
+    action.amount = amount
+    try? modelContext.save()
+
+    try? ledgerManager?.record(action: action, for: person)
   }
 
   private func findExistingSchedule() -> ScheduledAction? {

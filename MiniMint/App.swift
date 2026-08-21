@@ -21,6 +21,9 @@ extension EnvironmentValues {
     ledgerManager = LedgerManager(modelContext: modelContext)
 
     stateManager.restore()
+
+    NotificationManager.shared.requestAuthorization()
+    NotificationManager.shared.rescheduleAll(in: modelContext)
   }
 
   // MARK: Internal

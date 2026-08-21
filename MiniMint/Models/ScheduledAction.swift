@@ -52,6 +52,10 @@ final class ScheduledAction {
 
   // MARK: Internal
 
+  /// Stable identity used to key the local notifications this schedule owns, so
+  /// they can be rescheduled or cancelled without depending on SwiftData's
+  /// `PersistentIdentifier` (which is not stable across launches).
+  var id: UUID = UUID()
   var name: String
   var intervalDays: Int = 1
   var startDate: Date = Date.now
