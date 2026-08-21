@@ -20,13 +20,7 @@ extension MintyUI {
     var body: some View {
       ZStack {
         RoundedRectangle(cornerRadius: MintyUI.Radius.standard, style: .continuous)
-          .fill(
-            LinearGradient(
-              colors: [baseColor, baseColor.adjust(saturation: 0.12, brightness: -0.18, opacity: 0)],
-              startPoint: .topLeading,
-              endPoint: .bottomTrailing,
-            ),
-          )
+          .fill(baseColor)
           // A very subtle inner shadow: a faint light edge along the top and a
           // soft dark edge along the bottom so the card reads as slightly raised.
           .overlay {

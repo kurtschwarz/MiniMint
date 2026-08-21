@@ -11,37 +11,30 @@ struct PersonView: View {
   ) {
     self.personId = personId
     self.person = person
-
-    _activePage = State(initialValue: "Activity")
   }
 
   // MARK: Internal
 
   @State var person: Person? = nil
-  @State var activePage: String? = nil
 
   var personId: PersistentIdentifier? = nil
-
-  var rewardsView = PersonView.RewardsView()
 
   var activityView: PersonView.ActivityView {
     PersonView.ActivityView(personId: personId)
   }
 
-  var actionsView: PersonView.ActionsView {
-    PersonView.ActionsView(personId: personId)
+  var tint: Color {
+    if let background = person?.avatar?.background {
+      return Color(hex: background)
+    }
+
+    return .accentColor
   }
 
   var body: some View {
-    MintyUI.ScrollingPageView(
-      tint: (
-        person?.avatar != nil
-          ? Color(hex: person!.avatar!.background!)
-          : .accentColor,
-      ),
-      activePage: $activePage,
-    ) {
-      VStack(alignment: .center) {
+    GeometryReader { proxy in
+      ScrollView {
+        VStack(alignment: .center, spacing: 0) {
         if let person {
           MintyUI.ChildCard(
             person: person,
@@ -57,41 +50,82 @@ struct PersonView: View {
               )
             }
           }
-      .padding(.horizontal, 20)
+          .padding(.horizontal, 20)
 
-          ScrollView(.horizontal) {
-            HStack(spacing: 10) {
+          HStack(spacing: 12) {
+            if let personId {
               Button {
-                showAllowance = true
+                navigate(.sheet(.createAction(personId), .large))
               } label: {
-                Label("Allowance", systemImage: "dollarsign.arrow.trianglehead.counterclockwise.rotate.90")
-                  .font(.system(size: 14, weight: .medium))
-                  .foregroundStyle(Color("dark_grey"))
-                  .padding(.horizontal, 14)
-                  .padding(.vertical, 8)
+                quickAction("Deposit", systemImage: "arrow.down.left")
               }
               .buttonStyle(.plain)
-              .background(.ultraThinMaterial, in: Capsule())
             }
-            .padding(.horizontal, 30)
+
+            Button {
+              navigate(.sheet(.createReward, .medium))
+            } label: {
+              quickAction("Withdraw", systemImage: "arrow.up.right")
+            }
+            .buttonStyle(.plain)
+
+            Button {
+              showAllowance = true
+            } label: {
+              quickAction(
+                "Allowance",
+                systemImage: "dollarsign.arrow.trianglehead.counterclockwise.rotate.90",
+              )
+            }
+            .buttonStyle(.plain)
+
+            Button {} label: {
+              quickAction("More", systemImage: "ellipsis")
+            }
+            .buttonStyle(.plain)
           }
-          .scrollIndicators(.hidden)
-    }
+          .padding(.horizontal, 20)
+          .padding(.vertical, 24)
+        }
 
+        VStack(alignment: .leading, spacing: 0) {
+          sectionHeader("Latest Transactions")
+          activityView
 
-  }
-  .frame(maxWidth: .infinity, alignment: .center)
-  .padding(.top, 5)
-  .padding(.bottom, 20)
-  .padding(.horizontal, 10)
-    } labels: {
-      activityView.pageLabel()
-      actionsView.pageLabel()
-      rewardsView.pageLabel()
-    } pages: {
-      activityView
-      actionsView
-      rewardsView
+          Spacer(minLength: 0)
+        }
+        .padding(.top, 24)
+        .padding(.bottom, 20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+          UnevenRoundedRectangle(
+            topLeadingRadius: MintyUI.Radius.standard,
+            topTrailingRadius: MintyUI.Radius.standard,
+          )
+          .fill(Color.white)
+          .padding(.bottom, -1000),
+        )
+        .background(alignment: .top) {
+          UnevenRoundedRectangle(
+            topLeadingRadius: MintyUI.Radius.standard,
+            topTrailingRadius: MintyUI.Radius.standard,
+          )
+          .fill(Color.white)
+          .frame(height: 40)
+          .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: -3)
+        }
+      }
+        .frame(maxWidth: .infinity, alignment: .center)
+        .padding(.top, 5)
+        .padding(.bottom, 20)
+        .frame(minHeight: proxy.size.height)
+      }
+      .scrollContentBackground(.hidden)
+      .hideTopScrollEdgeEffect()
+      .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
+    .background {
+      Color(hex: 0xF7F7F7)
+        .ignoresSafeArea()
     }
     .toolbar {
       ToolbarItem(placement: .topBarLeading) {
@@ -140,30 +174,36 @@ struct PersonView: View {
           .adjust(saturation: 0.30, brightness: -0.35)
       }
     }
-    // Recording an action drops the adult back on the Activity tab to see it.
-    .onChange(of: stateManager.recordedActionCount) {
-      withAnimation(.easeInOut(duration: 0.25)) {
-        activePage = "Activity"
-      }
-    }
     .sheet(isPresented: $showAllowance) {
       if let person {
         AllowanceView(person: person)
           .presentationDetents([.large])
       }
     }
-    .safeAreaInset(edge: .bottom, content: {
-      if activePage == "Activity" {
-        activityView.stickyBottomView(navigate: navigate)
-      } else if activePage == "Actions" {
-        actionsView.stickyBottomView(
-          personId: personId!,
-          navigate: navigate,
-        )
-      } else if activePage == "Rewards" {
-        rewardsView.stickyBottomView(navigate: navigate)
-      }
-    })
+    }
+  }
+
+  func quickAction(_ title: String, systemImage: String) -> some View {
+    VStack(spacing: 10) {
+      Image(systemName: systemImage)
+        .font(.system(size: 22, weight: .regular))
+        .foregroundStyle(Color.black)
+        .frame(width: 64, height: 64)
+        .background(Color.white, in: Circle())
+
+      Text(title)
+        .font(.system(size: 15, weight: .regular))
+        .foregroundStyle(Color.black)
+    }
+    .frame(maxWidth: .infinity)
+  }
+
+  func sectionHeader(_ title: String) -> some View {
+    Text(title)
+      .font(.system(size: 18, weight: .bold))
+      .foregroundStyle(Color("dark_grey"))
+      .padding(.horizontal, 20)
+      .padding(.top, 10)
   }
 
   func loadPerson() {
@@ -205,6 +245,32 @@ struct PersonView: View {
   @Environment(\.navigate) private var navigate
   @Environment(\.dismiss) private var dismiss
   @Environment(StateManager.self) private var stateManager: StateManager
+}
+
+extension View {
+  /// Removes the soft scroll-edge blur SwiftUI applies at the top edge on
+  /// iOS 26+, leaving a hard (blur-free) edge.
+  @ViewBuilder
+  func hideTopScrollEdgeEffect() -> some View {
+    if #available(iOS 26.0, *) {
+      scrollEdgeEffectStyle(.soft, for: .top)
+    } else {
+      self
+    }
+  }
+
+  /// Clips the view into a circle with a Liquid Glass background on iOS 26+,
+  /// falling back to an ultra-thin material on earlier releases.
+  @ViewBuilder
+  func quickActionGlass() -> some View {
+    let shape = RoundedRectangle(cornerRadius: 18, style: .continuous)
+
+    if #available(iOS 26.0, *) {
+      glassEffect(.regular, in: shape)
+    } else {
+      background(.ultraThinMaterial, in: shape)
+    }
+  }
 }
 
 #Preview {

@@ -24,6 +24,16 @@ enum Route: Identifiable, Hashable {
 
   var id: Self { self }
 
+  /// Sheets that should present at a single, non-resizable detent.
+  var isFixedSize: Bool {
+    switch self {
+    case .selectAvatar:
+      true
+    default:
+      false
+    }
+  }
+
 }
 
 // MARK: - NavigateAction

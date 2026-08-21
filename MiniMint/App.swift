@@ -35,9 +35,15 @@ extension EnvironmentValues {
           view(route: route)
         }
         .sheet(item: $stateManager.sheet) { route in
-          view(route: route)
-            .presentationDetents([.medium, .large], selection: $stateManager.sheetPresentationDetent)
-            .presentationDragIndicator(.automatic)
+          if route.isFixedSize {
+            view(route: route)
+              .presentationDetents([.large])
+              .presentationDragIndicator(.hidden)
+          } else {
+            view(route: route)
+              .presentationDetents([.medium, .large], selection: $stateManager.sheetPresentationDetent)
+              .presentationDragIndicator(.automatic)
+          }
         }
       }
       .onNavigate { type in
