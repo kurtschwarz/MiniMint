@@ -70,7 +70,7 @@ struct AllowanceView: View {
         }
         .disabled(!canSave)
 
-        if NotificationManager.isDebugToolingAvailable {
+        if isDeveloperToolingAvailable {
           Section(header: Text("Developer Tools")) {
             Button("Test Push Notification") {
               NotificationManager.shared.sendTestNotification(for: person)

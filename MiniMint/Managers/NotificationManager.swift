@@ -58,17 +58,6 @@ struct NotificationManager {
     install(plans: plans, clearingAllAllowances: false, removingPrefixes: prefixes)
   }
 
-  /// Whether the in-app debug tooling (e.g. the "Test Notification" button)
-  /// should be shown: only in the simulator or a TestFlight (sandbox receipt)
-  /// build, never in a shipped App Store build.
-  static var isDebugToolingAvailable: Bool {
-    #if targetEnvironment(simulator)
-    return true
-    #else
-    return Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
-    #endif
-  }
-
   /// Fire a one-off allowance notification a few seconds out so the exact copy
   /// can be eyeballed without waiting for a real due date. Debug tooling only.
   func sendTestNotification(for person: Person) {
